@@ -93,10 +93,12 @@ class PointManager
 /**
  * TODO: document your custom view class.
  */
-public class ShowCameraView extends View {
+public class ShowCameraView extends View implements CompassListener {
 	private TextPaint mTextPaint;
 	protected int counter = 0;
 	private Paint mLinePaint;
+	Compass m_compass;
+	float m_compassValues[];
 
 	Vector<PointOfInterest> pointsInterestList;
 	
@@ -116,7 +118,8 @@ public class ShowCameraView extends View {
 	}
 
 	private void init(AttributeSet attrs, int defStyle) {
-
+		m_compass = new Compass(getContext(), this);
+		
 		// Set up a default TextPaint object
 		mTextPaint = new TextPaint();
 		mTextPaint.setFlags(Paint.ANTI_ALIAS_FLAG);
@@ -137,6 +140,9 @@ public class ShowCameraView extends View {
 		
 		pointsInterestList = new PointManager().GetPointsForLocation(null);
 		
+		/*
+		 * Now updated directly by the sensor
+		 *  
 		Thread animator = new Thread() {
 			public void run() {
 				boolean run = true;
@@ -153,7 +159,7 @@ public class ShowCameraView extends View {
 		};
 		
 		animator.start();
-	
+		*/
 	}
 
 	
@@ -174,14 +180,22 @@ public class ShowCameraView extends View {
 		for(PointOfInterest p: pointsInterestList)
 		{
 			float mod = index % 2;
+			float posX = paddingLeft + p.getAngle()*3 + 180 * m_compassValues[0];
 			float positionY = paddingTop + 60 + (mod == 0 ? 30 : 0);
-			canvas.drawText(p.getLabel(), paddingLeft + p.getAngle()*3, positionY, mTextPaint);
-			canvas.drawLine(paddingLeft + p.getAngle()*3 , positionY, paddingLeft + p.getAngle()*3, getHeight(), mLinePaint);
+			canvas.drawText(p.getLabel(), posX, positionY, mTextPaint);
+			canvas.drawLine(posX , positionY, posX, getHeight() - 60 * m_compassValues[2], mLinePaint);
 			index++;
 		}
 		
 		// Draw the text.
 		
+	}
+
+	@Override
+	public void sensorDataChanged(float[] values) {
+		// TODO Evaluate frequency
+		m_compassValues = values;
+		ShowCameraView.this.postInvalidate();
 	}
 
 
