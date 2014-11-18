@@ -1,4 +1,4 @@
-package com.example.videocapture;
+package com.example.summitsAround;
 
 import android.app.Activity;
 import android.content.Context;
@@ -9,7 +9,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.FrameLayout.LayoutParams;
+import android.widget.Toast;
 
 public class MainActivity extends Activity {
 	Camera mCamera = null;
@@ -20,16 +20,28 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		
         // Create an instance of Camera
-        mCamera = getCameraInstance();
-		setContentView(R.layout.activity_main);
+		if(checkCameraHardware(getBaseContext()))
+		{
+			mCamera = getCameraInstance();
+		}
+		
+		if(mCamera != null)
+		{			
+			setContentView(R.layout.activity_main);
+	
+	        // Create our Preview view and set it as the content of our activity.
+	        mPreview = new CameraPreview(this, mCamera);
+	        FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
+	        preview.addView(mPreview);
+	
+	        View animation = findViewById(R.id.animation_view);
+	        animation.bringToFront();
+		}
+		else
+		{
+			Toast.makeText(getBaseContext(), "Error: Camera not available", Toast.LENGTH_LONG).show();
+		}
 
-        // Create our Preview view and set it as the content of our activity.
-        mPreview = new CameraPreview(this, mCamera);
-        FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
-        preview.addView(mPreview);
-
-        View animation = findViewById(R.id.animation_view);
-        animation.bringToFront();
 	}
 
 	@Override

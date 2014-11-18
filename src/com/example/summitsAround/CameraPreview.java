@@ -1,4 +1,4 @@
-package com.example.videocapture;
+package com.example.summitsAround;
 
 import java.io.IOException;
 
