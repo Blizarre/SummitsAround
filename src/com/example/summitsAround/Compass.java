@@ -24,6 +24,10 @@ public class Compass implements SensorEventListener {
 	
 	float[] mAccelerometerValues = new float[3];
 	float[] mMagnetometerValues = new float[3];
+	
+	float[] lastAzimuth = new float[10];
+	int m_index = 0;
+	
 	SensorManager m_sensorManager = null;
 	Sensor m_compass = null, m_accelerometer = null;
 	CompassListener m_Compasslistener;
@@ -34,7 +38,7 @@ public class Compass implements SensorEventListener {
 		m_compass = m_sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
 		m_accelerometer = m_sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 
-		m_sensorManager.registerListener(this, m_compass, SensorManager.SENSOR_DELAY_UI);
+		m_sensorManager.registerListener(this, m_compass, SensorManager.SENSOR_DELAY_GAME);
 	    m_sensorManager.registerListener(this, m_accelerometer, SensorManager.SENSOR_DELAY_UI);
 	}
 
@@ -66,7 +70,20 @@ public class Compass implements SensorEventListener {
 		SensorManager.getRotationMatrix(R, null, mAccelerometerValues, mMagnetometerValues);
 		SensorManager.getOrientation(R, values);
 		
+		// dampening algorithm: first try 
+		lastAzimuth[m_index%lastAzimuth.length] = values[0];
+		m_index ++;
+		values[0] = mean(lastAzimuth);
+		
 		m_Compasslistener.sensorDataChanged(values);
 	}
-
+	
+	float mean(float[] array) { 
+		float sum = 0;
+		for(float val: array)
+		{
+			sum += val;
+		}
+		return sum / array.length;
+	}
 }

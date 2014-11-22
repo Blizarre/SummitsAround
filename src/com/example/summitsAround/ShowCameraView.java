@@ -1,6 +1,7 @@
 package com.example.summitsAround;
 
 import java.util.Collections;
+import java.util.Queue;
 import java.util.Vector;
 
 import android.content.Context;
@@ -23,7 +24,8 @@ enum PointType
 {
 	SUMMIT,
 	TOWN,
-	MONUMENT
+	MONUMENT,
+	NONE
 }
 
 class PointOfInterest implements Comparable<PointOfInterest>
@@ -46,9 +48,9 @@ class PointOfInterest implements Comparable<PointOfInterest>
 		mType = type;
 		mDistance = distance;
 		mLabel = label;
-		if(angle < 0 || angle >= 360)
+		if(angle < 0 || angle >= 2 * Math.PI)
 		{
-			throw new IllegalArgumentException("Angle must be between 0 and 360°");
+			throw new IllegalArgumentException("Angle must be between 0 and 2*Pi");
 		}
 		mAngle = angle;
 	}
@@ -82,25 +84,38 @@ class PointManager
 	Vector<PointOfInterest> GetPointsForLocation(Location location)
 	{
 		Vector<PointOfInterest> data = new Vector<PointOfInterest>();
-		data.add(new PointOfInterest(PointType.TOWN, "New York", 5000, 90f));
+/*		data.add(new PointOfInterest(PointType.TOWN, "New York", 5000, 90f));
 		data.add(new PointOfInterest(PointType.SUMMIT, "Mont blanc", 200, 270f));
 		data.add(new PointOfInterest(PointType.TOWN, "Paris", 300, 0f));
-		data.add(new PointOfInterest(PointType.MONUMENT, "Part Dieu", 1000, 180f));
+		data.add(new PointOfInterest(PointType.MONUMENT, "Part Dieu", 1000, 180f));*/
+		data.add(new PointOfInterest(PointType.NONE, "North", 1000, 0));
+		data.add(new PointOfInterest(PointType.NONE, "South", 1000,(float)Math.PI));
+		data.add(new PointOfInterest(PointType.NONE, "West", 1000,(float)(Math.PI/2.0d) ) );
+		data.add(new PointOfInterest(PointType.NONE, "East", 1000,(float)(3.0d * Math.PI/2.0d) ) );
+
+
 		return data;
 	}
 }
+
 
 /**
  * TODO: document your custom view class.
  */
 public class ShowCameraView extends View implements CompassListener {
-	private TextPaint mTextPaint;
+	private TextPaint mTextPaint, mDebugPaint;
 	protected int counter = 0;
 	private Paint mLinePaint;
 	Compass m_compass;
 	float m_compassValues[];
+	float m_horizontalAngle = (float) (Math.PI / 2.0d);
 
 	Vector<PointOfInterest> pointsInterestList;
+	
+	void setHorizontalCameraAngle(float angle)
+	{
+		m_horizontalAngle = angle;
+	}
 	
 	public ShowCameraView(Context context) {
 		super(context);
@@ -130,6 +145,13 @@ public class ShowCameraView extends View implements CompassListener {
 		mTextPaint.setShadowLayer(10f, 15f, 20f, Color.BLACK);
 		mTextPaint.setTypeface(Typeface.DEFAULT_BOLD);
 		
+		mDebugPaint = new TextPaint();
+		mDebugPaint.setTextAlign(Paint.Align.LEFT);
+		mDebugPaint.setTextSize(30);
+		mDebugPaint.setTextSkewX(-0.25f);
+		mDebugPaint.setColor(Color.BLUE);
+		mDebugPaint.setTypeface(Typeface.DEFAULT_BOLD);
+		
 		mLinePaint = new Paint();
 		mLinePaint.setColor(Color.RED);
 		mLinePaint.setStyle(Style.STROKE);
@@ -139,53 +161,67 @@ public class ShowCameraView extends View implements CompassListener {
 		this.setBackgroundColor(Color.TRANSPARENT);
 		
 		pointsInterestList = new PointManager().GetPointsForLocation(null);
-		
-		/*
-		 * Now updated directly by the sensor
-		 *  
-		Thread animator = new Thread() {
-			public void run() {
-				boolean run = true;
-				while(run)
-				{
-					try {
-						sleep(1000/24);
-					} catch (InterruptedException e) {
-						run = false;
-					}
-					ShowCameraView.this.postInvalidate();
-				}
-			}
-		};
-		
-		animator.start();
-		*/
 	}
 
 	
+	float normalize(double a) { return normalize((float)a); }
+
+	float normalize(float a)
+	{
+		if (a > 2 * Math.PI)
+		{
+			return (float)(a - 2 * Math.PI);
+		}
+		else if (a < 0)
+		{
+			return (float)(a + 2 * Math.PI);
+		}
+		else
+			return a;
+	}
+	
+	boolean shouldDraw(float angle)
+	{
+		if(angle > Math.PI)
+			angle = (float)(2*Math.PI - angle);
+		
+		float angleMax = m_horizontalAngle / 2.0f;
+		
+		return angle > angleMax;
+	}
 	
 	@Override
 	protected void onDraw(Canvas canvas) {
 		super.onDraw(canvas);
-		//canvas.drawColor(Color.CYAN);
 		// TODO: consider storing these as member variables to reduce
 		// allocations per draw cycle.
-		int paddingLeft = getPaddingLeft();
 		int paddingTop = getPaddingTop();
 
 		counter++;
-		
+				
 		int index = 0;
+		
+		float widthNorm = getWidth() / (float)Math.sin(m_horizontalAngle);
+		
 		Collections.sort(pointsInterestList);
 		for(PointOfInterest p: pointsInterestList)
 		{
-			float mod = index % 2;
-			float posX = paddingLeft + p.getAngle()*3 + 180 * m_compassValues[0];
-			float positionY = paddingTop + 60 + (mod == 0 ? 30 : 0);
-			canvas.drawText(p.getLabel(), posX, positionY, mTextPaint);
-			canvas.drawLine(posX , positionY, posX, getHeight() - 60 * m_compassValues[2], mLinePaint);
+			// Corrector for the fact that we are pointing the device PI/2 from the screen
+			float correctedAngle = normalize(m_compassValues[0] - p.getAngle() - Math.PI / 2.0f);
+			if(shouldDraw(correctedAngle))
+			{
+				
+				float posX = getWidth()/2.0f + (float)Math.sin(correctedAngle) * widthNorm; 
+			
+				float mod = index % 2;
+				float positionY = paddingTop + 60 + (mod == 0 ? 30 : 0);
+				canvas.drawText(p.getLabel() + " " + posX, posX, positionY, mTextPaint);
+				canvas.drawLine(posX , positionY, posX, getHeight(), mLinePaint);
+			}
 			index++;
 		}
+		
+		canvas.drawText(""+m_compassValues[0], 0, getHeight() - 30, mDebugPaint);
 		
 		// Draw the text.
 		
@@ -200,3 +236,4 @@ public class ShowCameraView extends View implements CompassListener {
 
 
 }
+

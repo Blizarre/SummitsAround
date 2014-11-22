@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.hardware.Camera;
+import android.hardware.Camera.CameraInfo;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -34,7 +35,9 @@ public class MainActivity extends Activity {
 	        FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
 	        preview.addView(mPreview);
 	
-	        View animation = findViewById(R.id.animation_view);
+	        ShowCameraView animation = (ShowCameraView)findViewById(R.id.animation_view);
+	        float cameraHorizontalViewAngle = (float) Math.toRadians(mCamera.getParameters().getHorizontalViewAngle());
+	        animation.setHorizontalCameraAngle(cameraHorizontalViewAngle);
 	        animation.bringToFront();
 		}
 		else
