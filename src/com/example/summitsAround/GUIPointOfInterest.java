@@ -1,0 +1,66 @@
+package com.example.summitsAround;
+
+import android.graphics.PointF;
+
+import com.example.summitsAround.PointOfInterest.PointType;
+
+public class GUIPointOfInterest  implements Comparable<GUIPointOfInterest>
+{
+	PointType mType;
+	Angle mAngle;
+	float mDistance;
+	String mLabel;
+	float mCorrectedAngle = 0;
+	
+	public GUIPointOfInterest(String name, PointType type, float distance, Angle angle) {
+		mAngle = angle;
+		mDistance = distance;
+		mLabel = name;
+		mType = type;
+	}
+	
+	public PointType getType() { return mType; }
+	public String getLabel() { return mLabel; }
+
+	public Angle getAngle()	{ return mAngle; }
+	
+	public float getDistance(boolean inMiles) {
+		return inMiles?mDistance * 0.6214f:mDistance;
+	}
+
+	@Override
+	public int compareTo(GUIPointOfInterest another) {
+		return this.getAngle().compareTo(another.getAngle());
+	}
+	
+	// TODO: Find a way to reduce redundant computations (currentAngle, widthNorm)
+	// TODO: This is getting ridiculous, Create a real Angle class with coherent add/sub/compare. 
+	
+	/*
+	 * Check whether the GUIPOI is is the screen space.
+	 */
+	public boolean shouldDraw(Angle cameraOpenAngle, Angle cameraAngle)
+	{
+		Angle currentAngle = getAngle().sub(cameraAngle);
+		if(currentAngle.getRawAngle() > Angle.PI)
+			currentAngle = new Angle(0).sub(currentAngle);
+		
+		Angle angleMax = cameraOpenAngle.mul(0.5);
+		
+		return currentAngle.compareTo(angleMax) <= 0;
+	}
+	/* 
+	 * Return the position of the item in the screen space
+	 */
+	public PointF getPositionInGUI(Angle cameraOpenAngle, float screenWidth, float screenHeight, Angle cameraAngle)
+	{
+		Angle currentAngle = getAngle().sub(cameraAngle);
+		PointF position = new PointF();
+		double widthNorm = screenWidth / cameraOpenAngle.sin();
+		
+		position.x = screenWidth/2.0f + (float)(currentAngle.sin() * widthNorm); 
+		position.y = screenHeight; // For now the altitude is not computed
+		return position;
+	}
+}
+

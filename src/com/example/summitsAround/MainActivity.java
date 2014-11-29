@@ -36,7 +36,7 @@ public class MainActivity extends Activity {
 	        preview.addView(mPreview);
 	
 	        ShowCameraView animation = (ShowCameraView)findViewById(R.id.animation_view);
-	        float cameraHorizontalViewAngle = (float) Math.toRadians(mCamera.getParameters().getHorizontalViewAngle());
+	        Angle cameraHorizontalViewAngle = new Angle(Math.toRadians(mCamera.getParameters().getHorizontalViewAngle()));
 	        animation.setHorizontalCameraAngle(cameraHorizontalViewAngle);
 	        animation.bringToFront();
 		}

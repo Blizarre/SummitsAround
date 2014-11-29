@@ -70,6 +70,11 @@ public class Compass implements SensorEventListener {
 		SensorManager.getRotationMatrix(R, null, mAccelerometerValues, mMagnetometerValues);
 		SensorManager.getOrientation(R, values);
 		
+		// The compass will give 0.0 when the top of the phone is facing North. However, the user user is holding 
+		// the phone looking at the screen, so, for him the phone is facing West. Remove PI/2 to get to the 
+		// user's perspective 
+		values[0] += Math.PI / 2.0d;
+		
 		// dampening algorithm: first try 
 		lastAzimuth[m_index%lastAzimuth.length] = values[0];
 		m_index ++;
