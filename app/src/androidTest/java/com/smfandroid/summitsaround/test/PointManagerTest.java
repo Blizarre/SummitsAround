@@ -1,6 +1,6 @@
-package com.example.summitsAround.test;
+package com.smfandroid.summitsaround.test;
 
-import com.example.summitsAround.*;
+import com.smfandroid.summitsaround.*;
 
 import android.test.AndroidTestCase;
 

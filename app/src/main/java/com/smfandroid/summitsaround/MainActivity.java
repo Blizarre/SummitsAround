@@ -4,11 +4,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.hardware.Camera;
-import android.hardware.Camera.CameraInfo;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
@@ -51,8 +49,7 @@ public class MainActivity extends Activity {
 	public void onStop()
 	{
 		super.onStop();
-		if(mCamera != null)
-			mCamera.release();
+        mCamera.release();
 	}
 	
 	@Override
