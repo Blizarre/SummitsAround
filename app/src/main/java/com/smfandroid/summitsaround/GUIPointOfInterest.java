@@ -4,12 +4,13 @@ import android.graphics.PointF;
 
 import com.smfandroid.summitsaround.PointOfInterest.PointType;
 
+// TODO: Find a way to reduce redundant computations (currentAngle, widthNorm)
+
 public class GUIPointOfInterest implements Comparable<GUIPointOfInterest> {
     PointType mType;
     Angle mAngle;
     float mDistance;
     String mLabel;
-    float mCorrectedAngle = 0;
 
     public GUIPointOfInterest(String name, PointType type, float distance, Angle angle) {
         mAngle = angle;
@@ -38,9 +39,6 @@ public class GUIPointOfInterest implements Comparable<GUIPointOfInterest> {
     public int compareTo(GUIPointOfInterest another) {
         return this.getAngle().compareTo(another.getAngle());
     }
-
-    // TODO: Find a way to reduce redundant computations (currentAngle, widthNorm)
-    // TODO: This is getting ridiculous, Create a real Angle class with coherent add/sub/compare.
 
     /*
      * Check whether the GUIPOI is is the screen space.

@@ -12,9 +12,7 @@ interface CompassListener {
      * float[] android.hardware.SensorManager.getOrientation(float[] R, float[] values)
      * with "values" as [x, y, z]
      *
-     * @param x: azimuth, rotation around the Z axis.
-     * @param y: pitch, rotation around the X axis.
-     * @param z: roll, rotation around the Y axis.
+     * @param values: [azimuth, rotation around the Z axis, pitch, rotation around the X axis., roll, rotation around the Y axis]
      */
     void sensorDataChanged(float[] values);
 }
@@ -24,15 +22,17 @@ public class Compass implements SensorEventListener {
     float[] mAccelerometerValues = new float[3];
     float[] mMagnetometerValues = new float[3];
 
-    float[] lastAzimuth = new float[10];
+    // BUG detected, when smoothing values [0, 2*PI] the result is PI instead of 0 or 2*PI
+    // TODO: reactivate the smoothing of the values, fix this bug
+    float[] lastAzimuth = new float[1];
     int m_index = 0;
 
     SensorManager m_sensorManager = null;
     Sensor m_compass = null, m_accelerometer = null;
-    CompassListener m_Compasslistener;
+    CompassListener m_compasslistener;
 
     Compass(Context context, CompassListener listener) {
-        m_Compasslistener = listener;
+        m_compasslistener = listener;
         m_sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         m_compass = m_sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
         m_accelerometer = m_sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
@@ -45,9 +45,7 @@ public class Compass implements SensorEventListener {
     /*
      * Nothing to see here right now
      */
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {
-        return;
-    }
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {  }
 
     public void onSensorChanged(SensorEvent sensorEvent) {
         float[] values = new float[3];
@@ -79,7 +77,7 @@ public class Compass implements SensorEventListener {
         m_index++;
         values[0] = mean(lastAzimuth);
 
-        m_Compasslistener.sensorDataChanged(values);
+        m_compasslistener.sensorDataChanged(values);
     }
 
     float mean(float[] array) {

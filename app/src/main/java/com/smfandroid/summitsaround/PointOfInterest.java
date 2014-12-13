@@ -31,9 +31,9 @@ public class PointOfInterest {
     public Angle computeAngleFrom(Location other) {
         // Since we will compute angles from points that are fairly close (< 10km),
         // we approximate the angle by working on a planar surface
-        double diffLatitude = other.getLatitude() - mLocation.getLatitude();
-        double diffLongitude = other.getLongitude() - mLocation.getLongitude();
-        return new Angle(Math.atan2(diffLongitude, diffLatitude));
+        double diffLatitude = mLocation.getLatitude() - other.getLatitude();
+        double diffLongitude = mLocation.getLongitude() - other.getLongitude();
+        return new Angle(Math.atan2(diffLatitude, diffLongitude)).sub(Angle.A_ZERO); // trigonometric to anti-trogonemoetric
     }
 
     // Compute the distance between this PointOfInterest and the location other, in kilo Meters

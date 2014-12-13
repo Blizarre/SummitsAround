@@ -14,6 +14,7 @@ import java.io.IOException;
 public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback {
     protected String TAG = getClass().getSimpleName();
     private SurfaceHolder mHolder;
+    // TODO: Upgrade to the new API
     private Camera mCamera;
 
     public CameraPreview(Context context, Camera camera) {

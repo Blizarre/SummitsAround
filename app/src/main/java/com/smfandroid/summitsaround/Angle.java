@@ -1,5 +1,8 @@
 package com.smfandroid.summitsaround;
 
+import java.util.Locale;
+
+@SuppressWarnings("UnusedDeclaration")
 public class Angle implements Comparable<Angle> {
 
     // Raw angle static definitions
@@ -91,7 +94,7 @@ public class Angle implements Comparable<Angle> {
 
     @Override
     public String toString() {
-        return String.valueOf(mAngle);
+        return String.format(Locale.ENGLISH, "%.3f", mAngle);
     }
 
     /**

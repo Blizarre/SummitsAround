@@ -34,18 +34,27 @@ public class PointManager {
         return l;
     }
 
+    /***
+     * Prepare a list of all the points of interest displayable for the current location.
+     * @param location The location used to generate the GUIPointOfInterest. If null, will only return the cardinal points
+     *                 if showCompass is True, or an empty list if showCompass is False.
+     * @param showCompass if True, include in the GUIPointOfInterest Vector the four cardinal points
+     * @return A vector of GUIPointOfInterest that should be displayed at the current location
+     */
     public Vector<GUIPointOfInterest> GetPointsForLocation(Location location, boolean showCompass) {
         Vector<GUIPointOfInterest> data = new Vector<>();
 
-        for (PointOfInterest p : m_pointsOfInterest)
-            data.add(new GUIPointOfInterest(p.getLabel(), p.getType(), p.computeDistanceFrom(location), p.computeAngleFrom(location)));
+        if(location != null) {
+            for (PointOfInterest p : m_pointsOfInterest)
+                data.add(new GUIPointOfInterest(p.getLabel(), p.getType(), p.computeDistanceFrom(location), p.computeAngleFrom(location)));
+        }
 
         // Default: North, South, East, West
         if (showCompass) {
             data.add(new GUIPointOfInterest("North", PointType.NONE, 1000, Angle.A_ZERO));
             data.add(new GUIPointOfInterest("South", PointType.NONE, 1000, Angle.A_PI));
-            data.add(new GUIPointOfInterest("West", PointType.NONE, 1000, Angle.A_HALF_PI));
-            data.add(new GUIPointOfInterest("East", PointType.NONE, 1000, Angle.A_THREE_HALF_PI));
+            data.add(new GUIPointOfInterest("West", PointType.NONE, 1000, Angle.A_THREE_HALF_PI));
+            data.add(new GUIPointOfInterest("East", PointType.NONE, 1000, Angle.A_HALF_PI));
         }
 
         return data;

@@ -18,15 +18,15 @@ import java.util.Vector;
 
 public class ShowCameraView extends View implements CompassListener, GPSLocatorListener {
     protected int counter = 0;
-    Compass m_compass;
-    GPSLocator m_gps;
-    float m_compassValues[];
-    Angle m_horizontalAngle = Angle.A_ZERO;
-    Angle m_horizontalViewAngle = Angle.A_HALF_PI;
-    Location m_location = null;
-    Vector<GUIPointOfInterest> m_pointsInterestList;
-    private TextPaint mTextPaint, mDebugPaint;
-    private Paint mLinePaint;
+    protected Compass m_compass;
+    protected GPSLocator m_gps;
+    protected float m_compassValues[];
+    protected Angle m_horizontalAngle = Angle.A_ZERO;
+    protected Angle m_horizontalViewAngle = Angle.A_HALF_PI;
+    protected Location m_location = null;
+    protected Vector<GUIPointOfInterest> m_pointsInterestList;
+    protected TextPaint mTextPaint, mDebugPaint;
+    protected Paint mLinePaint;
 
     public ShowCameraView(Context context) {
         super(context);
@@ -110,7 +110,17 @@ public class ShowCameraView extends View implements CompassListener, GPSLocatorL
             index++;
         }
 
-        canvas.drawText(String.valueOf(m_compassValues[0]), 0, getHeight() - 30, mDebugPaint);
+        canvas.drawText("Compass: " + m_horizontalAngle.toString(), 0, getHeight() - 60, mDebugPaint);
+
+        if(m_location == null)
+        {
+            canvas.drawText("Waiting for GPS . . .", 0, getHeight() - 30, mDebugPaint);
+        }
+        else
+        {
+            canvas.drawText("Location: " + m_location.getLatitude() + "," + m_location.getLongitude(), 0, getHeight() - 30, mDebugPaint);
+        }
+
     }
 
     @Override
