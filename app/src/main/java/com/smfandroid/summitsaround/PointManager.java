@@ -1,12 +1,12 @@
 package com.smfandroid.summitsaround;
 
-import java.util.Vector;
+import android.location.Location;
 
 import com.smfandroid.summitsaround.PointOfInterest.PointType;
 
-import android.location.Location;
+import java.util.Vector;
 
-/***
+/**
  * File format definition:
  * [
  * { "name":"Mairie de Villeurbanne", "altitude":100, "latitude":45.766592, "longitude":4.879600, "type":"BUILDING", "areas"=["Rhône", "France"] },
@@ -16,22 +16,38 @@ import android.location.Location;
  * ]
  */
 
-public class PointManager
-{
+public class PointManager {
+    protected Vector<PointOfInterest> m_pointsOfInterest = new Vector<>();
 
-	public Vector<GUIPointOfInterest> GetPointsForLocation(Location location, boolean showCompass)
-	{
-		Vector<GUIPointOfInterest> data = new Vector<>();
+    public PointManager() {
+        m_pointsOfInterest.add(new PointOfInterest(PointType.MONUMENT, "Mairie de Villeurbanne", createLocation(45.766592, 4.879600, 100.0)));
+        m_pointsOfInterest.add(new PointOfInterest(PointType.MONUMENT, "Tour Part Dieu", createLocation(45.761063, 4.853752, 100.0)));
+        m_pointsOfInterest.add(new PointOfInterest(PointType.MONUMENT, "Basilique de fourvière", createLocation(45.762262, 4.822910, 100.0)));
+        m_pointsOfInterest.add(new PointOfInterest(PointType.MONUMENT, "Mont Blanc", createLocation(45.832956, 6.865066, 4810)));
+    }
 
-		// Default: North, South, East, West 
-		if(showCompass)
-		{
+    protected Location createLocation(double latitude, double longitude, double altitude) {
+        Location l = new Location("DUMMYPROVIDER");
+        l.setLatitude(latitude);
+        l.setLongitude(longitude);
+        l.setAltitude(altitude);
+        return l;
+    }
+
+    public Vector<GUIPointOfInterest> GetPointsForLocation(Location location, boolean showCompass) {
+        Vector<GUIPointOfInterest> data = new Vector<>();
+
+        for (PointOfInterest p : m_pointsOfInterest)
+            data.add(new GUIPointOfInterest(p.getLabel(), p.getType(), p.computeDistanceFrom(location), p.computeAngleFrom(location)));
+
+        // Default: North, South, East, West
+        if (showCompass) {
             data.add(new GUIPointOfInterest("North", PointType.NONE, 1000, Angle.A_ZERO));
-            data.add(new GUIPointOfInterest("South", PointType.NONE, 1000, Angle.A_PI) );
-            data.add(new GUIPointOfInterest("West" , PointType.NONE, 1000, Angle.A_HALF_PI ) );
-            data.add(new GUIPointOfInterest("East" , PointType.NONE, 1000, Angle.A_THREE_HALF_PI ) );
+            data.add(new GUIPointOfInterest("South", PointType.NONE, 1000, Angle.A_PI));
+            data.add(new GUIPointOfInterest("West", PointType.NONE, 1000, Angle.A_HALF_PI));
+            data.add(new GUIPointOfInterest("East", PointType.NONE, 1000, Angle.A_THREE_HALF_PI));
         }
 
-		return data;
-	}
+        return data;
+    }
 }
