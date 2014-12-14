@@ -11,21 +11,7 @@ import android.widget.FrameLayout;
 import android.widget.Toast;
 
 public class MainActivity extends Activity {
-    Camera mCamera = null;
     CameraPreview mPreview = null;
-
-    /**
-     * A safe way to get an instance of the Camera object.
-     */
-    public static Camera getCameraInstance() {
-        Camera c = null;
-        try {
-            c = Camera.open(); // attempt to get a Camera instance
-        } catch (Exception e) {
-            // Camera is not available (in use or does not exist)
-        }
-        return c; // returns null if camera is unavailable
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,19 +19,15 @@ public class MainActivity extends Activity {
 
         // Create an instance of Camera
         if (checkCameraHardware(getBaseContext())) {
-            mCamera = getCameraInstance();
-        }
-
-        if (mCamera != null) {
             setContentView(R.layout.activity_main);
 
             // Create our Preview view and set it as the content of our activity.
-            mPreview = new CameraPreview(this, mCamera);
+            mPreview = new CameraPreview(this);
             FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
             preview.addView(mPreview);
 
             ShowCameraView animation = (ShowCameraView) findViewById(R.id.animation_view);
-            Angle cameraHorizontalViewAngle = new Angle(Math.toRadians(mCamera.getParameters().getHorizontalViewAngle()));
+            Angle cameraHorizontalViewAngle = new Angle(Math.toRadians(mPreview.getParameters().getHorizontalViewAngle()));
             animation.setHorizontalCameraAngle(cameraHorizontalViewAngle);
             animation.bringToFront();
         } else {
@@ -57,7 +39,6 @@ public class MainActivity extends Activity {
     @Override
     public void onStop() {
         super.onStop();
-        mCamera.release();
     }
 
     @Override

@@ -55,18 +55,27 @@ public class Angle implements Comparable<Angle> {
         return new Angle(mAngle * val);
     }
 
+    public void setAngle(double val) {
+        mAngle = val;
+    }
+
+    public static double normalize(double angle)
+    {
+        // TODO: See if modulo would be enough
+        if (angle > 0) {
+            while (angle >= TWO_PI)
+                angle -= TWO_PI;
+        } else {
+            while (angle < 0)
+                angle += TWO_PI;
+        }
+        return angle;
+    }
     /**
      * Bring the value of mAngle between 0 and 2*PI.
      */
     public void normalize() {
-        // TODO: See if modulo would be enough
-        if (mAngle > 0) {
-            while (mAngle >= TWO_PI)
-                mAngle -= TWO_PI;
-        } else {
-            while (mAngle < 0)
-                mAngle += TWO_PI;
-        }
+        mAngle = Angle.normalize(mAngle);
     }
 
     public double getRawAngle() {

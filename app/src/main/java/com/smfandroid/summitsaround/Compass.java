@@ -12,9 +12,11 @@ interface CompassListener {
      * float[] android.hardware.SensorManager.getOrientation(float[] R, float[] values)
      * with "values" as [x, y, z]
      *
-     * @param values: [azimuth, rotation around the Z axis, pitch, rotation around the X axis., roll, rotation around the Y axis]
+     * @param azimuth rotation around the Z axis
+     * @param pitch rotation around the X axis
+     * @param roll, rotation around the Y axis
      */
-    void sensorDataChanged(float[] values);
+    void sensorDataChanged(Angle azimuth, Angle pitch, Angle roll);
 }
 
 public class Compass implements SensorEventListener {
@@ -22,9 +24,7 @@ public class Compass implements SensorEventListener {
     float[] mAccelerometerValues = new float[3];
     float[] mMagnetometerValues = new float[3];
 
-    // BUG detected, when smoothing values [0, 2*PI] the result is PI instead of 0 or 2*PI
-    // TODO: reactivate the smoothing of the values, fix this bug
-    float[] lastAzimuth = new float[1];
+    double[] lastAzimuth = new double[10];
     int m_index = 0;
 
     SensorManager m_sensorManager = null;
@@ -50,6 +50,7 @@ public class Compass implements SensorEventListener {
     public void onSensorChanged(SensorEvent sensorEvent) {
         float[] values = new float[3];
         float[] R = new float[9];
+        Angle azimuth, pitch, roll;
 
         switch (sensorEvent.sensor.getType()) {
             case Sensor.TYPE_ACCELEROMETER:
@@ -67,24 +68,54 @@ public class Compass implements SensorEventListener {
         SensorManager.getRotationMatrix(R, null, mAccelerometerValues, mMagnetometerValues);
         SensorManager.getOrientation(R, values);
 
+        /* For debugging purpose */
+        SingletonDebugData debug = SingletonDebugData.getInstance();
+        debug.rawInputAzimuth = values[0];
+        debug.rawInputPitch = values[1];
+        debug.rawInputRoll = values[2];
+        debug.numberOfCompassRefresh ++;
+        /* / For debugging purpose */
+
+
         // The compass will give 0.0 when the top of the phone is facing North. However, the user user is holding
-        // the phone looking at the screen, so, for him the phone is facing West. Remove PI/2 to get to the
+        // the phone looking at the screen, so, for him the phone is facing East. Remove PI/2 to get to the
         // user's perspective
-        values[0] += Math.PI / 2.0d;
+        azimuth = new Angle(values[0] - Angle.HALF_PI);
+        pitch = new Angle(values[1]);
+        roll = new Angle(values[2]);
 
         // dampening algorithm: first try
-        lastAzimuth[m_index % lastAzimuth.length] = values[0];
+        lastAzimuth[m_index % lastAzimuth.length] = azimuth.getRawAngle();
         m_index++;
-        values[0] = mean(lastAzimuth);
+        azimuth.setAngle( mean(lastAzimuth) );
 
-        m_compasslistener.sensorDataChanged(values);
+        m_compasslistener.sensorDataChanged(azimuth, pitch, roll);
     }
 
-    float mean(float[] array) {
-        float sum = 0;
-        for (float val : array) {
+
+    double  mean(double[] array) {
+        boolean oneIsOver3HalfPi = false;
+        double sum = 0;
+
+        for (double val : array) {
             sum += val;
+            if(val > Angle.THREE_HALF_PI) {
+                oneIsOver3HalfPi = true;
+                break;
+            }
         }
-        return sum / array.length;
+
+        // Worst-cas scenario
+        if(oneIsOver3HalfPi)
+        {
+            sum = 0;
+            for (double val : array) {
+                if(val < Angle.HALF_PI)
+                    sum += val + Angle.TWO_PI;
+                else
+                    sum += val;
+            }
+        }
+        return sum/array.length;
     }
 }

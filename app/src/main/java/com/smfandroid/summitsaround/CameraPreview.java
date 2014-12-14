@@ -5,6 +5,7 @@ import android.hardware.Camera;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.hardware.Camera.Parameters;
 
 import java.io.IOException;
 
@@ -17,10 +18,8 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
     // TODO: Upgrade to the new API
     private Camera mCamera;
 
-    public CameraPreview(Context context, Camera camera) {
+    public CameraPreview(Context context) {
         super(context);
-        mCamera = camera;
-
         // Install a SurfaceHolder.Callback so we get notified when the
         // underlying surface is created and destroyed.
         mHolder = getHolder();
@@ -28,6 +27,10 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
     }
 
     public void surfaceCreated(SurfaceHolder holder) {
+        if(mCamera == null)
+        {
+            mCamera = getCameraInstance();
+        }
         // The Surface has been created, now tell the camera where to draw the preview.
         try {
             mCamera.setPreviewDisplay(holder);
@@ -41,7 +44,31 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         if (mCamera != null) {
             mCamera.stopPreview();
             mCamera.setPreviewCallback(null);
+            mCamera.release();
+            mCamera = null;
         }
+    }
+
+    public Parameters getParameters()
+    {
+        if(mCamera == null)
+        {
+            mCamera = getCameraInstance();
+        }
+        return mCamera.getParameters();
+    }
+
+    /**
+     * A safe way to get an instance of the Camera object.
+     */
+    public static Camera getCameraInstance() {
+        Camera c = null;
+        try {
+            c = Camera.open(); // attempt to get a Camera instance
+        } catch (Exception e) {
+            // Camera is not available (in use or does not exist)
+        }
+        return c; // returns null if camera is unavailable
     }
 
     public void surfaceChanged(SurfaceHolder holder, int format, int w, int h) {

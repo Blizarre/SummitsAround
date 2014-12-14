@@ -34,6 +34,11 @@ public class GPSLocator implements LocationListener {
 
     @Override
     public void onLocationChanged(Location location) {
+        /* For debugging purpose */
+        SingletonDebugData.getInstance().rawInputLatitude = location.getLatitude();
+        SingletonDebugData.getInstance().rawInputLongitude = location.getLongitude();
+        SingletonDebugData.getInstance().numberOfGPSRefresh++;
+
         GPSAccuracy acc = location.getAccuracy() < 20.0f ? GPSAccuracy.GOOD : GPSAccuracy.BAD;
         m_locator.updatedPosition(location, acc);
     }

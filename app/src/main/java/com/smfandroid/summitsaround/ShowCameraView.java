@@ -13,6 +13,7 @@ import android.util.AttributeSet;
 import android.view.View;
 
 import java.util.Collections;
+import java.util.Locale;
 import java.util.Vector;
 
 
@@ -20,7 +21,6 @@ public class ShowCameraView extends View implements CompassListener, GPSLocatorL
     protected int counter = 0;
     protected Compass m_compass;
     protected GPSLocator m_gps;
-    protected float m_compassValues[];
     protected Angle m_horizontalAngle = Angle.A_ZERO;
     protected Angle m_horizontalViewAngle = Angle.A_HALF_PI;
     protected Location m_location = null;
@@ -110,26 +110,31 @@ public class ShowCameraView extends View implements CompassListener, GPSLocatorL
             index++;
         }
 
-        canvas.drawText("Compass: " + m_horizontalAngle.toString(), 0, getHeight() - 60, mDebugPaint);
+        drawDebugData(canvas);
+    }
+
+    private void drawDebugData(Canvas canvas) {
+        float interline = -(mDebugPaint.ascent() + mDebugPaint.descent())*1.5f;
+        float height = getHeight() - interline;
+        String debugData = SingletonDebugData.getInstance().toString();
+
+        debugData += String.format("\nApp Compass: %02.3f\n", m_horizontalAngle.getRawAngle());
 
         if(m_location == null)
         {
-            canvas.drawText("Waiting for GPS . . .", 0, getHeight() - 30, mDebugPaint);
+            debugData += "App Waiting for GPS . . .";
         }
         else
         {
-            canvas.drawText("Location: " + m_location.getLatitude() + "," + m_location.getLongitude(), 0, getHeight() - 30, mDebugPaint);
+            debugData += String.format(Locale.ENGLISH, "App GPS Location: %03.4f, %03.4f", m_location.getLatitude(), m_location.getLongitude());
         }
 
+        for (String line: debugData.split("\n")) {
+            canvas.drawText(line, 0, height, mDebugPaint);
+            height -= interline;
+        }
     }
 
-    @Override
-    public void sensorDataChanged(float[] values) {
-        // TODO Evaluate frequency
-        m_compassValues = values;
-        m_horizontalAngle = new Angle(values[0]);
-        ShowCameraView.this.postInvalidate();
-    }
 
     @Override
     public void updatedPosition(Location loc, GPSAccuracy accuracy) {
@@ -137,5 +142,12 @@ public class ShowCameraView extends View implements CompassListener, GPSLocatorL
     }
 
 
+    @Override
+    public void sensorDataChanged(Angle azimuth, Angle pitch, Angle roll) {
+        // TODO Evaluate frequency
+        m_horizontalAngle = azimuth;
+        ShowCameraView.this.postInvalidate();
+
+    }
 }
 
