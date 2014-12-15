@@ -21,7 +21,7 @@ public class ShowCameraView extends View implements CompassListener, GPSLocatorL
     protected int counter = 0;
     protected Compass m_compass;
     protected GPSLocator m_gps;
-    protected Angle m_horizontalAngle = Angle.A_ZERO;
+    protected Angle m_deviceAzimuth = Angle.A_ZERO;
     protected Angle m_horizontalViewAngle = Angle.A_HALF_PI;
     protected Location m_location = null;
     protected Vector<GUIPointOfInterest> m_pointsInterestList;
@@ -98,8 +98,8 @@ public class ShowCameraView extends View implements CompassListener, GPSLocatorL
 
         for (GUIPointOfInterest p : m_pointsInterestList) {
 
-            if (p.shouldDraw(m_horizontalViewAngle, m_horizontalAngle)) {
-                screenPosition = p.getPositionInGUI(m_horizontalViewAngle, getWidth(), getHeight(), m_horizontalAngle);
+            if (p.shouldDraw(m_horizontalViewAngle, m_deviceAzimuth)) {
+                screenPosition = p.getPositionInGUI(m_horizontalViewAngle, getWidth(), getHeight(), m_deviceAzimuth);
 
                 float mod = index % 2;
                 float positionY = 60 + (mod == 0 ? 30 : 0);
@@ -118,7 +118,7 @@ public class ShowCameraView extends View implements CompassListener, GPSLocatorL
         float height = getHeight() - interline;
         String debugData = SingletonDebugData.getInstance().toString();
 
-        debugData += String.format("\nApp Compass: %02.3f\n", m_horizontalAngle.getRawAngle());
+        debugData += String.format("\nApp Compass: %02.3f\n", m_deviceAzimuth.getRawAngle());
 
         if(m_location == null)
         {
@@ -145,7 +145,7 @@ public class ShowCameraView extends View implements CompassListener, GPSLocatorL
     @Override
     public void sensorDataChanged(Angle azimuth, Angle pitch, Angle roll) {
         // TODO Evaluate frequency
-        m_horizontalAngle = azimuth;
+        m_deviceAzimuth = azimuth;
         ShowCameraView.this.postInvalidate();
 
     }

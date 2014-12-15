@@ -53,11 +53,16 @@ public class GUIPointOfInterest implements Comparable<GUIPointOfInterest> {
         return currentAngle.compareTo(angleMax) <= 0;
     }
 
-    /*
+    /***
      * Return the position of the item in the screen space
+     * @param cameraOpenAngle Camera FOV angle (Angle type)
+     * @param screenWidth Width of the screen (pixels)
+     * @param screenHeight Height of the screen (pixels)
+     * @param deviceAzimuth Azimuth of the device
+     * @return
      */
-    public PointF getPositionInGUI(Angle cameraOpenAngle, float screenWidth, float screenHeight, Angle cameraAngle) {
-        Angle currentAngle = getAngle().sub(cameraAngle);
+    public PointF getPositionInGUI(Angle cameraOpenAngle, float screenWidth, float screenHeight, Angle deviceAzimuth) {
+        Angle currentAngle = getAngle().sub(deviceAzimuth);
         PointF position = new PointF();
         double widthNorm = screenWidth / cameraOpenAngle.sin();
 

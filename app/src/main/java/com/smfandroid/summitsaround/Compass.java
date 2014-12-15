@@ -78,9 +78,9 @@ public class Compass implements SensorEventListener {
 
 
         // The compass will give 0.0 when the top of the phone is facing North. However, the user user is holding
-        // the phone looking at the screen, so, for him the phone is facing East. Remove PI/2 to get to the
+        // the phone looking at the screen, so, for him the phone is facing East. Add PI/2 to get to the
         // user's perspective
-        azimuth = new Angle(values[0] - Angle.HALF_PI);
+        azimuth = new Angle(values[0] + Angle.HALF_PI);
         pitch = new Angle(values[1]);
         roll = new Angle(values[2]);
 
@@ -93,15 +93,26 @@ public class Compass implements SensorEventListener {
     }
 
 
+    /***
+     * Compute the mean of an array of angles (as double). This code needs to use a little trick to
+     * be able to compute the mean when some angles are 0 and the other are 2*PI.
+     * (the naIve method will average 0 and 2PI as PI, even if Angle(0) == Angle(2PI))
+     * We use the fact that all angles will be close, with max(angle) - min(angle) < PI.
+     * We bring all the smaller values on the same range as the bigger one by adding 2*PI.
+     * If the spread is too large, the average will return garbage anyway, so there is no need
+     * to use a more computationally-demanding algorithm.
+     * @param array array of angles to be averaged. Warning, not for the general case !
+     * @return the averaged Angle
+     */
     double  mean(double[] array) {
         boolean oneIsOver3HalfPi = false;
         double sum = 0;
 
         for (double val : array) {
             sum += val;
-            if(val > Angle.THREE_HALF_PI) {
+            if(val > Angle.THREE_HALF_PI) { // Some values may be > 2PI and back to 0
                 oneIsOver3HalfPi = true;
-                break;
+                break; // break here and re-compute the main in the worst-case scenario
             }
         }
 
@@ -110,7 +121,7 @@ public class Compass implements SensorEventListener {
         {
             sum = 0;
             for (double val : array) {
-                if(val < Angle.HALF_PI)
+                if(val < Angle.HALF_PI) // we know angles > 3PI/2 exists, so we will translate the smaller one
                     sum += val + Angle.TWO_PI;
                 else
                     sum += val;

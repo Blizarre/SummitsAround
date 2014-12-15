@@ -33,16 +33,25 @@ public class PointOfInterest {
         // we approximate the angle by working on a planar surface
         double diffLatitude = mLocation.getLatitude() - other.getLatitude();
         double diffLongitude = mLocation.getLongitude() - other.getLongitude();
-        return new Angle(Math.atan2(diffLatitude, diffLongitude)).sub(Angle.A_ZERO); // trigonometric to anti-trogonemoetric
+        return new Angle(Math.atan2(diffLongitude, diffLatitude));
     }
 
-    // Compute the distance between this PointOfInterest and the location other, in kilo Meters
+    /***
+     * Compute the distance between this PointOfInterest and the location other,
+     * @param other Other point
+     * @return distance in kilometer between this and other
+     */
     public float computeDistanceFrom(Location other) {
         return (float) (other.distanceTo(mLocation) / 1000.0d);
     }
 
-    public GUIPointOfInterest computeGUIPointOfInterest(Location other) {
-        return new GUIPointOfInterest(getLabel(), getType(), computeDistanceFrom(other), computeAngleFrom(other));
+    /***
+     * Return a GUIPointOfInterest suitable for drawing on the GUI
+     * @param reference the location of the device used as a reference.
+     * @return a GUIPointOfInterest. Its values are derived from this.
+     */
+    public GUIPointOfInterest computeGUIPointOfInterest(Location reference) {
+        return new GUIPointOfInterest(getLabel(), getType(), computeDistanceFrom(reference), computeAngleFrom(reference));
     }
 
 
