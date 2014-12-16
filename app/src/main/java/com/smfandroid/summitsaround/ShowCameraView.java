@@ -30,24 +30,24 @@ public class ShowCameraView extends View implements CompassListener, GPSLocatorL
 
     public ShowCameraView(Context context) {
         super(context);
-        init(null, 0);
+        init();
     }
 
     public ShowCameraView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        init(attrs, 0);
+        init();
     }
 
     public ShowCameraView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        init(attrs, defStyle);
+        init();
     }
 
     void setHorizontalCameraAngle(Angle angle) {
         m_horizontalViewAngle = angle;
     }
 
-    private void init(AttributeSet attrs, int defStyle) {
+    private void init() {
         m_compass = new Compass(getContext(), this);
         m_gps = new GPSLocator(getContext());
 
@@ -102,7 +102,7 @@ public class ShowCameraView extends View implements CompassListener, GPSLocatorL
                 screenPosition = p.getPositionInGUI(m_horizontalViewAngle, getWidth(), getHeight(), m_deviceAzimuth);
 
                 float mod = index % 2;
-                float positionY = 60 + (mod == 0 ? 30 : 0);
+                float positionY = 60 + (mod == 0 ? 50 : 0);
                 canvas.drawText(p.getLabel(), screenPosition.x, positionY, mTextPaint);
 
                 canvas.drawLine(screenPosition.x, positionY, screenPosition.x, screenPosition.y, mLinePaint);

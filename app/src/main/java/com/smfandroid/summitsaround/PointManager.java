@@ -22,8 +22,10 @@ public class PointManager {
     public PointManager() {
         m_pointsOfInterest.add(new PointOfInterest(PointType.MONUMENT, "Mairie de Villeurbanne", createLocation(45.766592, 4.879600, 100.0)));
         m_pointsOfInterest.add(new PointOfInterest(PointType.MONUMENT, "Tour Part Dieu", createLocation(45.761063, 4.853752, 100.0)));
-        m_pointsOfInterest.add(new PointOfInterest(PointType.MONUMENT, "Basilique de fourvière", createLocation(45.762262, 4.822910, 100.0)));
+        m_pointsOfInterest.add(new PointOfInterest(PointType.MONUMENT, "Basilique de Fourvière", createLocation(45.762262, 4.822910, 100.0)));
         m_pointsOfInterest.add(new PointOfInterest(PointType.MONUMENT, "Mont Blanc", createLocation(45.833679, 6.864564, 4810)));
+        m_pointsOfInterest.add(new PointOfInterest(PointType.MONUMENT, "Tour Incity", createLocation(45.763360, 4.850961, 100.0)));
+        m_pointsOfInterest.add(new PointOfInterest(PointType.MONUMENT, "Opéra de Lyon", createLocation(45.767792, 4.836611, 100.0)));
     }
 
     protected Location createLocation(double latitude, double longitude, double altitude) {
