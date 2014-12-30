@@ -13,15 +13,15 @@ public class PointManagerTest extends AndroidTestCase {
 
     public void testLoadFromJSON() throws JSONException {
         PointManager pm = new PointManager();
-        StringBuilder testData = new StringBuilder()
-            .append("{ POIList:[ ")
-            .append("{ \"name\":\"Mairie de Villeurbanne\", \"altitude\":100, \"latitude\":45.766592, \"longitude\":4.879600, \"type\":\"BUILDING\", \"areas\" : [\"Rhône\", \"France\"] },")
-            .append("{ \"name\":\"Tour Part Dieu\", \"altitude\":100, \"latitude\":45.761063, \"longitude\":4.853752, \"type\":\"BUILDING\", \"areas\" : [\"Rhône\", \"France\"] },")
-            .append("{ \"name\":\"Basilique de fourvière\", \"altitude\":100, \"latitude\":45.762262, \"longitude\":4.822910, \"type\":\"BUILDING\", \"areas\": [ \"Rhône\", \"France\" ] },")
-            .append("{ \"name\":\"Mont Blanc\", \"altitude\":100, \"latitude\":45.833679, \"longitude\":6.864564, \"type\":\"SUMMIT\", \"areas\" : [\"Rhône\", \"France\"] }")
-            .append("]}");
+        String testData =
+            "{ POIList:[ " +
+            "{ \"name\":\"Mairie de Villeurbanne\", \"altitude\":100, \"latitude\":45.766592, \"longitude\":4.879600, \"type\":\"BUILDING\", \"areas\" : [\"Rhône\", \"France\"] }," +
+            "{ \"name\":\"Tour Part Dieu\", \"altitude\":100, \"latitude\":45.761063, \"longitude\":4.853752, \"type\":\"BUILDING\", \"areas\" : [\"Rhône\", \"France\"] }," +
+            "{ \"name\":\"Basilique de fourvière\", \"altitude\":100, \"latitude\":45.762262, \"longitude\":4.822910, \"type\":\"BUILDING\", \"areas\": [ \"Rhône\", \"France\" ] }," +
+            "{ \"name\":\"Mont Blanc\", \"altitude\":100, \"latitude\":45.833679, \"longitude\":6.864564, \"type\":\"SUMMIT\", \"areas\" : [\"Rhône\", \"France\"] }" +
+            "]}";
 
-        pm.loadFromJson(testData.toString());
+        pm.loadFromJson(testData);
 
         Vector<PointOfInterest> listOfPoi = pm.getPointList();
         assertEquals(4, listOfPoi.size());

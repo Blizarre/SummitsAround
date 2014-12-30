@@ -1,5 +1,7 @@
 package com.smfandroid.summitsaround;
 
+import android.support.annotation.NonNull;
+
 import java.util.Locale;
 
 @SuppressWarnings("UnusedDeclaration")
@@ -92,7 +94,7 @@ public class Angle implements Comparable<Angle> {
     }
 
     @Override
-    public int compareTo(Angle another) {
+    public int compareTo(@NonNull Angle another) {
         this.normalize();
         another.normalize();
         if (mAngle == another.mAngle)

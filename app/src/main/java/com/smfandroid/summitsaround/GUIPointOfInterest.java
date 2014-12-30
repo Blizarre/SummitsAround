@@ -1,6 +1,7 @@
 package com.smfandroid.summitsaround;
 
 import android.graphics.PointF;
+import android.support.annotation.NonNull;
 
 import com.smfandroid.summitsaround.PointOfInterest.PointType;
 
@@ -36,7 +37,7 @@ public class GUIPointOfInterest implements Comparable<GUIPointOfInterest> {
     }
 
     @Override
-    public int compareTo(GUIPointOfInterest another) {
+    public int compareTo(@NonNull GUIPointOfInterest another) {
         return this.getAngle().compareTo(another.getAngle());
     }
 
@@ -59,7 +60,7 @@ public class GUIPointOfInterest implements Comparable<GUIPointOfInterest> {
      * @param screenWidth Width of the screen (pixels)
      * @param screenHeight Height of the screen (pixels)
      * @param deviceAzimuth Azimuth of the device
-     * @return
+     * @return the position in the GUI in pixels
      */
     public PointF getPositionInGUI(Angle cameraOpenAngle, float screenWidth, float screenHeight, Angle deviceAzimuth) {
         Angle currentAngle = getAngle().sub(deviceAzimuth);

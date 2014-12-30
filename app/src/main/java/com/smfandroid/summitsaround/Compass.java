@@ -29,10 +29,10 @@ public class Compass implements SensorEventListener {
 
     SensorManager m_sensorManager = null;
     Sensor m_compass = null, m_accelerometer = null;
-    CompassListener m_compasslistener;
+    CompassListener m_compassListener;
 
     Compass(Context context, CompassListener listener) {
-        m_compasslistener = listener;
+        m_compassListener = listener;
         m_sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         m_compass = m_sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
         m_accelerometer = m_sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
@@ -54,14 +54,10 @@ public class Compass implements SensorEventListener {
 
         switch (sensorEvent.sensor.getType()) {
             case Sensor.TYPE_ACCELEROMETER:
-                for (int i = 0; i < 3; i++) {
-                    mAccelerometerValues[i] = sensorEvent.values[i];
-                }
+                System.arraycopy(sensorEvent.values, 0, mAccelerometerValues, 0, 3);
                 break;
             case Sensor.TYPE_MAGNETIC_FIELD:
-                for (int i = 0; i < 3; i++) {
-                    mMagnetometerValues[i] = sensorEvent.values[i];
-                }
+                System.arraycopy(sensorEvent.values, 0, mMagnetometerValues, 0, 3);
                 break;
         }
 
@@ -89,7 +85,7 @@ public class Compass implements SensorEventListener {
         m_index++;
         azimuth.setAngle( mean(lastAzimuth) );
 
-        m_compasslistener.sensorDataChanged(azimuth, pitch, roll);
+        m_compassListener.sensorDataChanged(azimuth, pitch, roll);
     }
 
 

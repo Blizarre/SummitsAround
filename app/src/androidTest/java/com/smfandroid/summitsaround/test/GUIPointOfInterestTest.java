@@ -26,7 +26,7 @@ public class GUIPointOfInterestTest extends TestCase {
 	// Check that if sorted in a collection, the sort done using the angle 
 	public void isComparable()
 	{
-		List<GUIPointOfInterest> l = new Vector<GUIPointOfInterest>();
+		List<GUIPointOfInterest> l = new Vector<>();
 		GUIPointOfInterest p1 = new GUIPointOfInterest("Test1",  PointType.MONUMENT, 10.0f, new Angle(0.5f));
 		GUIPointOfInterest p2 = new GUIPointOfInterest("Test2",  PointType.MONUMENT, 10.0f, new Angle(0.9f));
 		GUIPointOfInterest p3 = new GUIPointOfInterest("Test3",  PointType.MONUMENT, 10.0f, new Angle(0.1f));
