@@ -59,6 +59,7 @@ public class PointOfInterest {
         SUMMIT,
         TOWN,
         MONUMENT,
+        BUILDING,
         NONE
     }
 }

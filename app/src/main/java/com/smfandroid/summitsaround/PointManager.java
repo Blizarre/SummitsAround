@@ -4,6 +4,10 @@ import android.location.Location;
 
 import com.smfandroid.summitsaround.PointOfInterest.PointType;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.Vector;
 
 /**
@@ -60,5 +64,33 @@ public class PointManager {
         }
 
         return data;
+    }
+
+    public void loadFromJson(String data) throws JSONException {
+        JSONObject obj = new JSONObject(data);
+        JSONArray jArray = obj.getJSONArray("POIList");
+        for (int i = 0; i < jArray.length(); i++) {
+            JSONObject jo_inside = jArray.getJSONObject(i);
+            String name = jo_inside.getString("name");
+            String type = jo_inside.getString("type");
+            double altitude = Double.parseDouble(jo_inside.getString("altitude"));
+            double latitude =  Double.parseDouble(jo_inside.getString("latitude"));
+            double longitude = Double.parseDouble(jo_inside.getString("longitude"));
+            if(jo_inside.has("areas")) {
+                JSONArray areasArr = jo_inside.getJSONArray("areas");
+                Vector<String> areas = new Vector<>();
+                for (int j = 0; j < areasArr.length(); ++j) // not used right now
+                {
+                    areas.add(areasArr.getString(j));
+                }
+            }
+            m_pointsOfInterest.add(new PointOfInterest(PointType.valueOf(type), name,
+                    createLocation(latitude, longitude, altitude)));
+        }
+    }
+
+
+    public Vector<PointOfInterest> getPointList() {
+        return m_pointsOfInterest;
     }
 }
