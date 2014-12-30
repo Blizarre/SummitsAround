@@ -27,27 +27,23 @@ public class ShowCameraView extends View implements CompassListener, GPSLocatorL
     protected Vector<GUIPointOfInterest> m_pointsInterestList;
     protected TextPaint mTextPaint, mDebugPaint;
     protected Paint mLinePaint;
+    protected PointManager mPointManager;
 
     public ShowCameraView(Context context) {
         super(context);
-        init();
     }
 
     public ShowCameraView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        init();
-    }
-
-    public ShowCameraView(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
-        init();
     }
 
     void setHorizontalCameraAngle(Angle angle) {
         m_horizontalViewAngle = angle;
     }
 
-    private void init() {
+    public void init(PointManager pm) {
+
+        mPointManager = pm;
         m_compass = new Compass(getContext(), this);
         m_gps = new GPSLocator(getContext());
 
@@ -77,12 +73,13 @@ public class ShowCameraView extends View implements CompassListener, GPSLocatorL
         this.setBackgroundColor(Color.TRANSPARENT);
 
         m_gps.register(this);
+
         updatePointOfInterestList(null);
     }
 
     void updatePointOfInterestList(Location loc) {
         m_location = loc;
-        m_pointsInterestList = new PointManager().GetPointsForLocation(loc, true);
+        m_pointsInterestList = mPointManager.GetPointsForLocation(loc, true);
     }
 
     @Override
@@ -147,7 +144,6 @@ public class ShowCameraView extends View implements CompassListener, GPSLocatorL
         // TODO Evaluate frequency
         m_deviceAzimuth = azimuth;
         ShowCameraView.this.postInvalidate();
-
     }
 }
 

@@ -3,15 +3,17 @@ package com.smfandroid.summitsaround;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.hardware.Camera;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
+import java.io.InputStreamReader;
+
 public class MainActivity extends Activity {
     CameraPreview mPreview = null;
+    PointManager mPointManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +29,18 @@ public class MainActivity extends Activity {
             preview.addView(mPreview);
 
             ShowCameraView animation = (ShowCameraView) findViewById(R.id.animation_view);
+            mPointManager = new PointManager();
+
+            try {
+                InputStreamReader dataFile = FileSystemFileReader.openFile("summitsAround.json");
+                mPointManager.loadFromJson(dataFile);
+            }
+            catch (Exception e) {
+                Toast.makeText(this, "Error loading json data file: " + e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+                mPointManager.loadDefaultData();
+            }
+
+            animation.init(mPointManager);
             Angle cameraHorizontalViewAngle = new Angle(Math.toRadians(mPreview.getParameters().getHorizontalViewAngle()));
             animation.setHorizontalCameraAngle(cameraHorizontalViewAngle);
             animation.bringToFront();
@@ -64,13 +78,7 @@ public class MainActivity extends Activity {
      * Check if this device has a camera
      */
     private boolean checkCameraHardware(Context context) {
-        if (context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
-            // this device has a camera
-            return true;
-        } else {
-            // no camera on this device
-            return false;
-        }
+        return context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA);
     }
 
 }
