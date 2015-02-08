@@ -138,6 +138,15 @@ public class ShowCameraView extends View implements CompassListener, GPSLocatorL
         updatePointOfInterestList(loc);
     }
 
+    public void onPause()
+    {
+        m_gps.unregister();
+    }
+
+    public void onResume()
+    {
+        m_gps.register(this);
+    }
 
     @Override
     public void sensorDataChanged(Angle azimuth, Angle pitch, Angle roll) {

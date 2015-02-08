@@ -51,6 +51,21 @@ public class MainActivity extends Activity {
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+        ShowCameraView animation = (ShowCameraView) findViewById(R.id.animation_view);
+        animation.onPause();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        ShowCameraView animation = (ShowCameraView) findViewById(R.id.animation_view);
+        animation.onResume();
+    }
+
+
+    @Override
     public void onStop() {
         super.onStop();
     }

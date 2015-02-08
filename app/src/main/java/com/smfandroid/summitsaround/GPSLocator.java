@@ -31,6 +31,9 @@ public class GPSLocator implements LocationListener {
         m_locator = loc;
     }
 
+    public void unregister() {
+        m_locManager.removeUpdates(this);
+    }
 
     @Override
     public void onLocationChanged(Location location) {
