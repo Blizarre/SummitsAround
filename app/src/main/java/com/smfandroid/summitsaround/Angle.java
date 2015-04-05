@@ -93,6 +93,8 @@ public class Angle implements Comparable<Angle> {
         return Math.cos(mAngle);
     }
 
+    public double tan() { return Math.tan(mAngle); }
+
     @Override
     public int compareTo(@NonNull Angle another) {
         this.normalize();
