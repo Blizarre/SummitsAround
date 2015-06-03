@@ -1,6 +1,9 @@
 package com.smfandroid.summitsaround;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -8,10 +11,18 @@ import android.graphics.Paint.Style;
 import android.graphics.PointF;
 import android.graphics.Typeface;
 import android.location.Location;
+import android.graphics.Matrix;
+import android.os.Environment;
 import android.text.TextPaint;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Collections;
 import java.util.Locale;
 import java.util.Vector;
@@ -28,6 +39,7 @@ public class ShowCameraView extends View implements CompassListener, GPSLocatorL
     protected TextPaint mTextPaint, mDebugPaint;
     protected Paint mLinePaint;
     protected PointManager mPointManager;
+    protected Bitmap mCameraBitmap;
 
     public ShowCameraView(Context context) {
         super(context);
@@ -69,6 +81,8 @@ public class ShowCameraView extends View implements CompassListener, GPSLocatorL
         mLinePaint.setStyle(Style.STROKE);
         mLinePaint.setStrokeWidth(5);
 
+        mCameraBitmap = BitmapFactory.decodeFile("/mnt/sdcard/summits/camera.png");
+
         this.setLayerType(LAYER_TYPE_HARDWARE, null);
         this.setBackgroundColor(Color.TRANSPARENT);
 
@@ -104,7 +118,41 @@ public class ShowCameraView extends View implements CompassListener, GPSLocatorL
 
                 canvas.drawLine(screenPosition.x, positionY, screenPosition.x, screenPosition.y, mLinePaint);
             }
-            index++;
+            SharedPreferences prefs = mPointManager.getPrefs();
+            if (prefs.getBoolean("camera_shoot", false)) {
+                Bitmap bmp = Bitmap.createBitmap(canvas.getWidth(), canvas.getHeight(), Bitmap.Config.ARGB_8888);
+                Paint paint = new Paint();
+                paint.setColor(Color.GREEN);
+                paint.setStrokeWidth(5);
+               // Matrix matrix = new Matrix();
+                canvas.drawBitmap(bmp, 0, 0 , paint);
+                try {
+                    File f = new File("/mnt/sdcard/summits", "test.jpg");
+                    if(f != null) {
+                        f.createNewFile();
+                    }
+                    FileOutputStream out = new FileOutputStream(f);
+                    bmp.compress(Bitmap.CompressFormat.JPEG, 95, out);
+                    out.flush();
+                    out.close();
+                } catch (FileNotFoundException e) {
+                    //file not found
+                    Log.e("FileNotFoundException: ", e.getMessage());
+                } catch(IOException e) {
+                    Log.e("IO ecxeption: ", e.getMessage());
+                }
+                SharedPreferences.Editor editor = prefs.edit();
+                editor.putBoolean("camera_shoot", false);
+                editor.commit();
+            }
+            if (null != mCameraBitmap) {
+                if (prefs.getBoolean("camera_ready", false)) {
+                    //affichage au milieu - 50px en x (50px = moité de la taille de l'image )
+                    // et en bas en y
+                    canvas.drawBitmap(mCameraBitmap, getWidth() / 2 - 50, (int) (getHeight() * 0.80), null);
+                }
+                index++;
+            }
         }
 
         drawDebugData(canvas);

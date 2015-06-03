@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:title="@string/areas">
+        <ListPreference
+            android:key="@string/areas"
+            android:title="@string/areas"/>
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/poi_type">
+        <CheckBoxPreference
+            android:key="@string/summits"
+            android:title="@string/summits"
+            android:defaultValue="true">
+        </CheckBoxPreference>
+        <CheckBoxPreference
+            android:key="@string/lakes"
+            android:title="@string/lakes"
+            android:defaultValue="true">
+        </CheckBoxPreference>
+        <CheckBoxPreference
+            android:key="@string/buildings"
+            android:title="@string/buildings"
+            android:defaultValue="true">
+        </CheckBoxPreference>
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:title="@string/distance">
+        <ListPreference
+            android:key="@string/distance"
+            android:title="@string/max_distance"
+            android:defaultValue="500"
+            android:entries="@array/listArray"
+            android:entryValues="@array/listValues">
+        </ListPreference>
+    </PreferenceCategory>
+</PreferenceScreen>

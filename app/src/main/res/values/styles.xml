@@ -1,8 +1,19 @@
 <resources>
-
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
+        <item name="actionMenuTextAppearance">@style/MyActionBarMenuText</item>
+    </style>
+    <style name="MyStyledActionBar" parent="@style/Widget.AppCompat.Light.ActionBar">
+        <!-- Setting values in the android namespace affects API levels 14+ -->
+        <item name="android:actionMenuTextAppearance">@style/MyActionBarMenuText</item>
+        <item name="android:actionMenuTextColor">@style/MyActionBarMenuText</item>
     </style>
 
+    <style name="MyActionBarMenuText" parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Menu">
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:background">#000000</item>
+        <item name="android:panelFullBackground">#ff00ffff</item>
+
+    </style>
 </resources>

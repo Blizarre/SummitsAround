@@ -5,4 +5,23 @@
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
 
+    <!--preferencesSettings-->
+    <string name="areas">regions</string>
+    <string name="poi_type">points d\'intérêts</string>
+    <string name="summits">sommets</string>
+    <string name="lakes">lacs</string>
+    <string name="buildings">batiments</string>
+
+    <string name="distance">distance</string>
+    <string name="max_distance">max. distance</string>
+    <string name="list_distance">dist</string>
+
+    <string name="general">general</string>
+    <string name="camera">camera</string>
+    <string name="camera_shoot">camera_shoot</string>
+
+    <!--menu-->
+    <string name="menu_settings">settings</string>
+
+
 </resources>

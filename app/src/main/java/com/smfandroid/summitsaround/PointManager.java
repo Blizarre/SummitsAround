@@ -1,5 +1,6 @@
 package com.smfandroid.summitsaround;
 
+import android.content.SharedPreferences;
 import android.location.Location;
 
 import com.smfandroid.summitsaround.PointOfInterest.PointType;
@@ -25,6 +26,14 @@ import java.util.Vector;
 public class PointManager {
     protected Vector<PointOfInterest> m_pointsOfInterest = new Vector<>();
 
+    public void setPrefs(SharedPreferences prefs) {
+        this.m_prefs = prefs;
+    }
+
+    public SharedPreferences getPrefs() {return this.m_prefs;}
+
+    SharedPreferences m_prefs;
+
     public PointManager() {
     }
 
@@ -47,8 +56,21 @@ public class PointManager {
         Vector<GUIPointOfInterest> data = new Vector<>();
 
         if(location != null) {
-            for (PointOfInterest p : m_pointsOfInterest)
-                data.add(new GUIPointOfInterest(p.getLabel(), p.getType(), p.computeDistanceFrom(location), p.computeAngleFrom(location)));
+            for (PointOfInterest p : m_pointsOfInterest) {
+                try {
+                    float d = p.computeDistanceFrom(location);
+                    float md = Float.parseFloat(m_prefs.getString("distance", "0"));
+                    if (Float.parseFloat(m_prefs.getString("distance", "0")) >
+                            p.computeDistanceFrom(location)) {
+                        data.add(new GUIPointOfInterest(p.getLabel(), p.getType(),
+                                p.computeDistanceFrom(location), p.computeAngleFrom(location)));
+                    }
+                } catch(Exception e) {
+                    //exception a modifier
+                    //printstacktrace c'est moche mais bon..
+                    e.printStackTrace();
+                }
+            }
         }
 
         // Default: North, South, East, West
@@ -58,7 +80,6 @@ public class PointManager {
             data.add(new GUIPointOfInterest("West", PointType.NONE, 1000, Angle.A_THREE_HALF_PI));
             data.add(new GUIPointOfInterest("East", PointType.NONE, 1000, Angle.A_HALF_PI));
         }
-
         return data;
     }
 
@@ -92,8 +113,12 @@ public class PointManager {
                     areas.add(areasArr.getString(j));
                 }
             }*/
-            m_pointsOfInterest.add(new PointOfInterest(PointType.valueOf(type), name,
-                    createLocation(latitude, longitude, altitude)));
+            if ((type.equals("SUMMIT") && m_prefs.getBoolean("sommets", false)) ||
+                    (type.equals("LAKE") && m_prefs.getBoolean("lacs", false)) ||
+                    (type.equals("BUILDING") && m_prefs.getBoolean("batiments", false))) {
+                    m_pointsOfInterest.add(new PointOfInterest(PointType.valueOf(type), name,
+                            createLocation(latitude, longitude, altitude)));
+            }
         }
     }
 
@@ -110,4 +135,23 @@ public class PointManager {
         m_pointsOfInterest.add(new PointOfInterest(PointType.MONUMENT, "Tour Incity", createLocation(45.763360, 4.850961, 100.0)));
         m_pointsOfInterest.add(new PointOfInterest(PointType.MONUMENT, "Opéra de Lyon", createLocation(45.767792, 4.836611, 100.0)));
     }
+
+
+    public void reset() {
+        m_pointsOfInterest.clear();
+        try {
+            InputStreamReader dataFile = FileSystemFileReader.openFile("summits/summitsAround.json");
+            this.loadFromJson(dataFile);
+        }
+        catch (Exception e) {
+            //Toast.makeText(this, "Error loading json data file: " + e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+            this.loadDefaultData();
+        }
+    }
+
+    public double processDistance(double lat1, double lon1, double lat2, double lon2){
+        return java.lang.Math.sqrt(java.lang.Math.pow((lat1 - lat2), 2) +
+                java.lang.Math.pow((lon1 - lon2), 2));
+    }
 }
+
