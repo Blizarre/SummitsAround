@@ -15,14 +15,17 @@ interface CompassListener {
      * @param azimuth rotation around the Z axis
      * @param pitch rotation around the X axis
      * @param roll, rotation around the Y axis
+     * @param accuracy, Accuracy of the reading: SensorManager.SENSOR_STATUS_ACCURACY_{LOW, MEDIUM, HIGH}
      */
-    void sensorDataChanged(Angle azimuth, Angle pitch, Angle roll);
+    void sensorDataChanged(Angle azimuth, Angle pitch, Angle roll, int accuracy);
 }
 
 public class Compass implements SensorEventListener {
 
-    float[] mAccelerometerValues = new float[3];
-    float[] mMagnetometerValues = new float[3];
+    float[] m_accelerometerValues = new float[3];
+    float[] m_magnetometerValues = new float[3];
+    int m_accuracy = SensorManager.SENSOR_STATUS_ACCURACY_LOW;
+
 
     double[] lastAzimuth = new double[10];
     int m_index = 0;
@@ -45,7 +48,10 @@ public class Compass implements SensorEventListener {
     /*
      * Nothing to see here right now
      */
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {  }
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+        SingletonDebugData.getInstance().compassAccuracy = accuracy;
+        m_accuracy = accuracy;
+    }
 
     public void onSensorChanged(SensorEvent sensorEvent) {
         float[] values = new float[3];
@@ -54,14 +60,14 @@ public class Compass implements SensorEventListener {
 
         switch (sensorEvent.sensor.getType()) {
             case Sensor.TYPE_ACCELEROMETER:
-                System.arraycopy(sensorEvent.values, 0, mAccelerometerValues, 0, 3);
+                System.arraycopy(sensorEvent.values, 0, m_accelerometerValues, 0, 3);
                 break;
             case Sensor.TYPE_MAGNETIC_FIELD:
-                System.arraycopy(sensorEvent.values, 0, mMagnetometerValues, 0, 3);
+                System.arraycopy(sensorEvent.values, 0, m_magnetometerValues, 0, 3);
                 break;
         }
 
-        SensorManager.getRotationMatrix(R, null, mAccelerometerValues, mMagnetometerValues);
+        SensorManager.getRotationMatrix(R, null, m_accelerometerValues, m_magnetometerValues);
         SensorManager.getOrientation(R, values);
 
         /* For debugging purpose */
@@ -85,7 +91,7 @@ public class Compass implements SensorEventListener {
         m_index++;
         azimuth.setAngle( mean(lastAzimuth) );
 
-        m_compassListener.sensorDataChanged(azimuth, pitch, roll);
+        m_compassListener.sensorDataChanged(azimuth, pitch, roll, m_accuracy);
     }
 
 

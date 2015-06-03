@@ -26,6 +26,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         mHolder.addCallback(this);
     }
 
+
     public void surfaceCreated(SurfaceHolder holder) {
         if(mCamera == null)
         {
@@ -47,6 +48,16 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
             mCamera.release();
             mCamera = null;
         }
+    }
+
+    public void onPause()
+    {
+        surfaceDestroyed(mHolder);
+    }
+
+    public void onResume()
+    {
+        surfaceCreated(mHolder);
     }
 
     public Parameters getParameters()
