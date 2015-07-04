@@ -9,9 +9,6 @@ import android.hardware.Camera.Parameters;
 
 import java.io.IOException;
 
-/**
- * A basic Camera preview class
- */
 public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback {
     protected String TAG = getClass().getSimpleName();
     private SurfaceHolder mHolder;
@@ -26,6 +23,11 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         mHolder.addCallback(this);
     }
 
+    public void takePhoto(Snapshot s)
+    {
+        Log.i(TAG, "Photo asked to be taken");
+        mCamera.takePicture(s, null, null, s);
+    }
 
     public void surfaceCreated(SurfaceHolder holder) {
         if(mCamera == null)

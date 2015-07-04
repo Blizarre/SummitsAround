@@ -4,8 +4,10 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.hardware.Camera;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -14,12 +16,15 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 import android.content.Intent;
+import android.hardware.Camera;
 
-import java.io.InputStreamReader;
+public class MainActivity extends Activity implements View.OnTouchListener{
+    protected String TAG = getClass().getSimpleName();
 
-public class MainActivity extends Activity implements View.OnTouchListener {
     CameraPreview mPreview = null;
     PointManager mPointManager;
+    Snapshot mSnap;
+
 
     class point{
         private float X;
@@ -44,6 +49,7 @@ public class MainActivity extends Activity implements View.OnTouchListener {
             FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
             preview.addView(mPreview);
             ShowCameraView animation = (ShowCameraView) findViewById(R.id.animation_view);
+            mSnap = new Snapshot(animation, mPreview);
             mPointManager = new PointManager();
             mPointManager.setPrefs(PreferenceManager.getDefaultSharedPreferences(this));
             mPointManager.reset();
@@ -163,7 +169,6 @@ public class MainActivity extends Activity implements View.OnTouchListener {
 
 
     public boolean onFling(point pt1, point pt2) {
-        boolean result = false;
         try {
             float diffY = pt2.getY() - pt1.getY();
             float diffX = pt2.getX() - pt1.getX();
@@ -190,7 +195,7 @@ public class MainActivity extends Activity implements View.OnTouchListener {
         } catch (Exception exception) {
             exception.printStackTrace();
         }
-        return result;
+        return false;
     }
 
     @Override
@@ -199,29 +204,26 @@ public class MainActivity extends Activity implements View.OnTouchListener {
     }
 
     public boolean onTouch() {
+        Log.d(TAG, "screen touched");
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+
         if (prefs.getBoolean("camera_ready", false)) {
-            SharedPreferences.Editor editor = prefs.edit();
-            editor.putBoolean("camera_shoot", true);
-            editor.commit();
+            mPreview.takePhoto(mSnap);
         }
         return true;
     }
 
     public void onSwipeRight() {
-        Toast T = Toast.makeText(this, "swiped right ", Toast.LENGTH_LONG);
-        T.show();
+        Log.i(TAG, "Swiped right");
         startSettingsActivity();
     }
 
     public void onSwipeLeft() {
-        Toast T = Toast.makeText(this, "swiped left", Toast.LENGTH_LONG);
-        T.show();
+        Log.i(TAG, "Swiped left");
     }
 
     public void onSwipeTop() {
-        //Toast T = Toast.makeText(this, "camera activated", Toast.LENGTH_LONG);
-        //T.show();
+        Log.i(TAG, "Swiped up");
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean("camera_ready", true);
@@ -229,6 +231,7 @@ public class MainActivity extends Activity implements View.OnTouchListener {
     }
 
     public void onSwipeBottom() {
+        Log.i(TAG, "Swiped down");
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean("camera_ready", false);
