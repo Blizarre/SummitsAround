@@ -149,7 +149,7 @@ public class ShowCameraView extends View implements CompassListener, GPSLocatorL
                 if (prefs.getBoolean("camera_ready", false)) {
                     //affichage au milieu - 50px en x (50px = moité de la taille de l'image )
                     // et en bas en y
-                    canvas.drawBitmap(mCameraBitmap, getWidth() / 2 - 50, (int) (getHeight() * 0.80), null);
+                    canvas.drawBitmap(mCameraBitmap, getWidth() / 2 - mCameraBitmap.getWidth() / 2, (int) (getHeight() * 0.80), null);
                 }
                 index++;
             }
