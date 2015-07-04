@@ -39,10 +39,10 @@ public class PointOfInterest {
     /***
      * Compute the distance between this PointOfInterest and the location other,
      * @param other Other point
-     * @return distance in kilometer between this and other
+     * @return distance in meters between this and other
      */
     public float computeDistanceFrom(Location other) {
-        return (float) (other.distanceTo(mLocation) / 1000.0d);
+        return (float) (other.distanceTo(mLocation));
     }
 
     /***

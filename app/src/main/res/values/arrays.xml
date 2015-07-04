@@ -10,14 +10,14 @@
         <item>no limit</item>
     </string-array>
 
-    <string-array name="listValues">
-        <item>0.5</item>
-        <item>1</item>
-        <item>2</item>
-        <item>5</item>
-        <item>20</item>
-        <item>50</item>
-        <item>-1</item>
-    </string-array>
+    <integer-array name="listValues">
+        <item>500</item>
+        <item>1000</item>
+        <item>2000</item>
+        <item>5000</item>
+        <item>20000</item>
+        <item>50000</item>
+        <item>0</item>
+    </integer-array>
 
 </resources>

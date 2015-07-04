@@ -57,18 +57,9 @@ public class PointManager {
 
         if(location != null) {
             for (PointOfInterest p : m_pointsOfInterest) {
-                try {
-                    float d = p.computeDistanceFrom(location);
-                    float md = Float.parseFloat(m_prefs.getString("distance", "0"));
-                    if (Float.parseFloat(m_prefs.getString("distance", "0")) >
-                            p.computeDistanceFrom(location)) {
-                        data.add(new GUIPointOfInterest(p.getLabel(), p.getType(),
-                                p.computeDistanceFrom(location), p.computeAngleFrom(location)));
-                    }
-                } catch(Exception e) {
-                    //exception a modifier
-                    //printstacktrace c'est moche mais bon..
-                    e.printStackTrace();
+                if ( p.computeDistanceFrom(location) < m_prefs.getInt("distance", Integer.MAX_VALUE)) {
+                    data.add(new GUIPointOfInterest(p.getLabel(), p.getType(),
+                            p.computeDistanceFrom(location), p.computeAngleFrom(location)));
                 }
             }
         }

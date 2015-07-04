@@ -154,7 +154,7 @@ public class MainActivity extends Activity implements View.OnTouchListener{
 
     private static final int SWIPE_THRESHOLD = 100;
 
-    public boolean onFling(point pt1, point pt2) {
+    public void onFling(point pt1, point pt2) {
         try {
             float diffY = pt2.getY() - pt1.getY();
             float diffX = pt2.getX() - pt1.getX();
@@ -181,7 +181,6 @@ public class MainActivity extends Activity implements View.OnTouchListener{
         } catch (Exception exception) {
             exception.printStackTrace();
         }
-        return false;
     }
 
     @Override
