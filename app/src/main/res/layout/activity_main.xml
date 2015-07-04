@@ -13,7 +13,8 @@
         android:layout_gravity="end"
         android:background="#ccc"
         android:paddingBottom="0dp"
-        android:paddingLeft="0dp" />
+        android:paddingLeft="0dp"
+        android:paddingRight="0dp" />
 
 </FrameLayout>
     

@@ -10,7 +10,7 @@ import android.hardware.Camera.Parameters;
 import java.io.IOException;
 
 public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback {
-    protected String TAG = getClass().getSimpleName();
+    protected final String TAG = getClass().getSimpleName();
     private SurfaceHolder mHolder;
     // TODO: Upgrade to the new API
     private Camera mCamera;
@@ -43,6 +43,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         }
     }
 
+    @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
         if (mCamera != null) {
             mCamera.stopPreview();
@@ -52,12 +53,8 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         }
     }
 
-    public void onPause()
-    {
-        surfaceDestroyed(mHolder);
-    }
 
-    public void onResume()
+    public void resume()
     {
         surfaceCreated(mHolder);
     }
@@ -84,6 +81,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         return c; // returns null if camera is unavailable
     }
 
+    @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int w, int h) {
         // If your preview can change or rotate, take care of those events here.
         // Make sure to stop the preview before resizing or reformatting it.

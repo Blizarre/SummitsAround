@@ -9,20 +9,17 @@ import android.graphics.Canvas;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.text.style.TtsSpan;
 import android.util.Log;
 import android.widget.Toast;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 
 
 public class Snapshot implements Camera.ShutterCallback, Camera.PictureCallback {
-    protected String TAG = getClass().getSimpleName();
+    protected final String TAG = getClass().getSimpleName();
 
     ShowCameraView mCamView;
     CameraPreview mPrev;
@@ -63,9 +60,9 @@ public class Snapshot implements Camera.ShutterCallback, Camera.PictureCallback 
             addImageToGallery(mCamView.getContext(), file.getAbsolutePath(), "summitAround", "summitAround");
         } catch(IOException exc)
         {
-            Toast.makeText(mCamView.getContext(), "Impossible to save image", Toast.LENGTH_LONG);
+            Toast.makeText(mCamView.getContext(), "Impossible to save image", Toast.LENGTH_LONG).show();
         }
-        mPrev.onResume();
+        mPrev.resume();
     }
 
     // from http://stackoverflow.com/questions/21759476/android-save-bitmap-to-gallery-time-created-wrong

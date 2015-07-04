@@ -19,7 +19,7 @@ import android.content.Intent;
 import android.hardware.Camera;
 
 public class MainActivity extends Activity implements View.OnTouchListener{
-    protected String TAG = getClass().getSimpleName();
+    protected final String TAG = getClass().getSimpleName();
 
     CameraPreview mPreview = null;
     PointManager mPointManager;
@@ -27,8 +27,8 @@ public class MainActivity extends Activity implements View.OnTouchListener{
 
 
     class point{
-        private float X;
-        private float Y;
+        private final float X;
+        private final float Y;
         public point(float x, float y){X = x; Y = y;}
         public float getX() {return X;}
         public float getY() {return Y;}
@@ -155,18 +155,6 @@ public class MainActivity extends Activity implements View.OnTouchListener{
 
 
     private static final int SWIPE_THRESHOLD = 100;
-    private static final int SWIPE_VELOCITY_THRESHOLD = 100;
-
-
-    public boolean onDown(MotionEvent e) {
-        return true;
-    }
-
-    public boolean onSingleTapConfirmed(MotionEvent e) {
-        //onTouch(e);
-        return true;
-    }
-
 
     public boolean onFling(point pt1, point pt2) {
         try {
@@ -203,14 +191,13 @@ public class MainActivity extends Activity implements View.OnTouchListener{
         return true;
     }
 
-    public boolean onTouch() {
+    public void onTouch() {
         Log.d(TAG, "screen touched");
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
         if (prefs.getBoolean("camera_ready", false)) {
             mPreview.takePhoto(mSnap);
         }
-        return true;
     }
 
     public void onSwipeRight() {
@@ -227,7 +214,7 @@ public class MainActivity extends Activity implements View.OnTouchListener{
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean("camera_ready", true);
-        editor.commit();
+        editor.apply();
     }
 
     public void onSwipeBottom() {
@@ -235,7 +222,7 @@ public class MainActivity extends Activity implements View.OnTouchListener{
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean("camera_ready", false);
-        editor.commit();
+        editor.apply();
     }
 
 }
