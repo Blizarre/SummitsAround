@@ -1,6 +1,9 @@
 package com.smfandroid.summitsaround;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -9,6 +12,7 @@ import android.graphics.PointF;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
+import android.preference.PreferenceManager;
 import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.view.View;
@@ -115,6 +119,8 @@ public class ShowCameraView extends View implements CompassListener, GPSLocatorL
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         drawAtAngle(canvas, m_deviceAzimuth);
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
 
         if (prefs.getBoolean("camera_ready", false)) {
             canvas.drawBitmap(mCameraBitmap, getWidth() / 2 - mCameraBitmap.getWidth() / 2, (int) (getHeight() * 0.80), null);
