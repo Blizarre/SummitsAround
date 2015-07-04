@@ -7,6 +7,7 @@ import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.PointF;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.text.TextPaint;
 import android.util.AttributeSet;
@@ -29,6 +30,7 @@ public class ShowCameraView extends View implements CompassListener, GPSLocatorL
     protected TextPaint mTextPaint, mDebugPaint;
     protected Paint mLinePaint;
     protected PointManager mPointManager;
+    protected Bitmap mCameraBitmap;
 
     public ShowCameraView(Context context) {
         super(context);
@@ -70,6 +72,9 @@ public class ShowCameraView extends View implements CompassListener, GPSLocatorL
         mLinePaint.setStyle(Style.STROKE);
         mLinePaint.setStrokeWidth(5);
 
+
+        mCameraBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.camera);
+
         this.setLayerType(LAYER_TYPE_HARDWARE, null);
         this.setBackgroundColor(Color.TRANSPARENT);
 
@@ -99,6 +104,7 @@ public class ShowCameraView extends View implements CompassListener, GPSLocatorL
                 float mod = index % 2;
                 float positionY = 60 + (mod == 0 ? 50 : 0);
                 canvas.drawText(p.getLabel(), screenPosition.x, positionY, mTextPaint);
+
                 canvas.drawLine(screenPosition.x, positionY, screenPosition.x, screenPosition.y, mLinePaint);
             }
             index++;
@@ -109,6 +115,11 @@ public class ShowCameraView extends View implements CompassListener, GPSLocatorL
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         drawAtAngle(canvas, m_deviceAzimuth);
+
+        if (prefs.getBoolean("camera_ready", false)) {
+            canvas.drawBitmap(mCameraBitmap, getWidth() / 2 - mCameraBitmap.getWidth() / 2, (int) (getHeight() * 0.80), null);
+        }
+
         drawDebugData(canvas);
     }
 
