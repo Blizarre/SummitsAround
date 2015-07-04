@@ -11,8 +11,6 @@ import android.graphics.Paint.Style;
 import android.graphics.PointF;
 import android.graphics.Typeface;
 import android.location.Location;
-import android.graphics.Matrix;
-import android.os.Environment;
 import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -22,7 +20,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.Collections;
 import java.util.Locale;
 import java.util.Vector;
@@ -197,7 +194,7 @@ public class ShowCameraView extends View implements CompassListener, GPSLocatorL
     }
 
     @Override
-    public void sensorDataChanged(Angle azimuth, Angle pitch, Angle roll) {
+    public void sensorDataChanged(Angle azimuth, Angle pitch, Angle roll, int accuracy) {
         // TODO Evaluate frequency
         m_deviceAzimuth = azimuth;
         ShowCameraView.this.postInvalidate();

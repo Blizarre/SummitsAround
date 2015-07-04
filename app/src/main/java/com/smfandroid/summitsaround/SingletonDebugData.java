@@ -11,7 +11,7 @@ public class SingletonDebugData {
     public float rawInputAzimuth;
     public float rawInputPitch;
     public float rawInputRoll;
-
+    public int compassAccuracy;
     public double rawInputLatitude;
     public double rawInputLongitude;
     public int numberOfGPSRefresh;

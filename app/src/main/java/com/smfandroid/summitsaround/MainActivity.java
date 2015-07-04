@@ -47,14 +47,6 @@ public class MainActivity extends Activity implements View.OnTouchListener {
             mPointManager = new PointManager();
             mPointManager.setPrefs(PreferenceManager.getDefaultSharedPreferences(this));
             mPointManager.reset();
-            /*try {
-                InputStreamReader dataFile = FileSystemFileReader.openFile("summits/summitsAround.json");
-                mPointManager.loadFromJson(dataFile);
-            }
-            catch (Exception e) {
-                //Toast.makeText(this, "Error loading json data file: " + e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-                mPointManager.loadDefaultData();
-            }*/
             animation.init(mPointManager);
             Angle cameraHorizontalViewAngle = new Angle(Math.toRadians(mPreview.getParameters().getHorizontalViewAngle()));
             animation.setHorizontalCameraAngle(cameraHorizontalViewAngle);
