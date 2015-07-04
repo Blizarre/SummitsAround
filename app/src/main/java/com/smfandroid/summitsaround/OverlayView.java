@@ -10,7 +10,6 @@ import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.PointF;
 import android.graphics.Typeface;
-import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.preference.PreferenceManager;
 import android.text.TextPaint;
@@ -21,7 +20,7 @@ import java.util.Locale;
 import java.util.Vector;
 
 
-public class ShowCameraView extends View implements CompassListener, GPSLocatorListener {
+public class OverlayView extends View implements CompassListener, GPSLocatorListener {
     protected String TAG = getClass().getSimpleName();
 
     protected int counter = 0;
@@ -36,11 +35,11 @@ public class ShowCameraView extends View implements CompassListener, GPSLocatorL
     protected PointManager mPointManager;
     protected Bitmap mCameraBitmap;
 
-    public ShowCameraView(Context context) {
+    public OverlayView(Context context) {
         super(context);
     }
 
-    public ShowCameraView(Context context, AttributeSet attrs) {
+    public OverlayView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
@@ -171,7 +170,7 @@ public class ShowCameraView extends View implements CompassListener, GPSLocatorL
     public void sensorDataChanged(Angle azimuth, Angle pitch, Angle roll, int accuracy) {
         // TODO Evaluate frequency
         m_deviceAzimuth = azimuth;
-        ShowCameraView.this.postInvalidate();
+        OverlayView.this.postInvalidate();
     }
 }
 

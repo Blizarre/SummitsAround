@@ -21,12 +21,12 @@ import java.util.Date;
 public class Snapshot implements Camera.ShutterCallback, Camera.PictureCallback {
     protected final String TAG = getClass().getSimpleName();
 
-    ShowCameraView mCamView;
+    OverlayView mCamView;
     CameraPreview mPrev;
     Canvas mCurrentCanvas;
     Angle mCurrentAngle;
 
-    public Snapshot(ShowCameraView show, CameraPreview prev) {
+    public Snapshot(OverlayView show, CameraPreview prev) {
         mCamView = show;
         mPrev = prev;
     }

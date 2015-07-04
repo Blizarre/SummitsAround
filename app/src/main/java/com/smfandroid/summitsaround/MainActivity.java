@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.hardware.Camera;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -16,7 +15,6 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 import android.content.Intent;
-import android.hardware.Camera;
 
 public class MainActivity extends Activity implements View.OnTouchListener{
     protected final String TAG = getClass().getSimpleName();
@@ -48,7 +46,7 @@ public class MainActivity extends Activity implements View.OnTouchListener{
             mPreview = new CameraPreview(this);
             FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
             preview.addView(mPreview);
-            ShowCameraView animation = (ShowCameraView) findViewById(R.id.animation_view);
+            OverlayView animation = (OverlayView) findViewById(R.id.animation_view);
             mSnap = new Snapshot(animation, mPreview);
             mPointManager = new PointManager();
             mPointManager.setPrefs(PreferenceManager.getDefaultSharedPreferences(this));
@@ -65,14 +63,14 @@ public class MainActivity extends Activity implements View.OnTouchListener{
     @Override
     public void onPause() {
         super.onPause();
-        ShowCameraView animation = (ShowCameraView) findViewById(R.id.animation_view);
+        OverlayView animation = (OverlayView) findViewById(R.id.animation_view);
         animation.onPause();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        ShowCameraView animation = (ShowCameraView) findViewById(R.id.animation_view);
+        OverlayView animation = (OverlayView) findViewById(R.id.animation_view);
         animation.onResume();
     }
 
@@ -120,7 +118,7 @@ public class MainActivity extends Activity implements View.OnTouchListener{
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         // TODO Auto-generated method stub
         //super.onActivityResult(requestCode, resultCode, data);
-        ShowCameraView animation = (ShowCameraView) findViewById(R.id.animation_view);
+        OverlayView animation = (OverlayView) findViewById(R.id.animation_view);
         animation.onPause();
         mPointManager.reset();
         animation.onResume();
