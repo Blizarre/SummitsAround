@@ -10,6 +10,7 @@ import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.PointF;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.text.TextPaint;
 import android.util.AttributeSet;
@@ -37,6 +38,7 @@ public class ShowCameraView extends View implements CompassListener, GPSLocatorL
     protected Paint mLinePaint;
     protected PointManager mPointManager;
     protected Bitmap mCameraBitmap;
+
 
     public ShowCameraView(Context context) {
         super(context);
@@ -78,7 +80,8 @@ public class ShowCameraView extends View implements CompassListener, GPSLocatorL
         mLinePaint.setStyle(Style.STROKE);
         mLinePaint.setStrokeWidth(5);
 
-        mCameraBitmap = BitmapFactory.decodeFile("/mnt/sdcard/summits/camera.png");
+
+        mCameraBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.camera);
 
         this.setLayerType(LAYER_TYPE_HARDWARE, null);
         this.setBackgroundColor(Color.TRANSPARENT);
@@ -142,7 +145,7 @@ public class ShowCameraView extends View implements CompassListener, GPSLocatorL
                 editor.putBoolean("camera_shoot", false);
                 editor.commit();
             }
-            if (null != mCameraBitmap) {
+            if (null != mCameraBitmap ) {
                 if (prefs.getBoolean("camera_ready", false)) {
                     //affichage au milieu - 50px en x (50px = moité de la taille de l'image )
                     // et en bas en y
