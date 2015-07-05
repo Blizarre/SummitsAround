@@ -4,13 +4,14 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.hardware.Camera;
 import android.graphics.Canvas;
+import android.hardware.Camera;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.widget.Toast;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -23,7 +24,6 @@ public class Snapshot implements Camera.ShutterCallback, Camera.PictureCallback 
 
     OverlayView mCamView;
     CameraPreview mPrev;
-    Canvas mCurrentCanvas;
     Angle mCurrentAngle;
 
     public Snapshot(OverlayView show, CameraPreview prev) {
@@ -34,7 +34,6 @@ public class Snapshot implements Camera.ShutterCallback, Camera.PictureCallback 
     @Override
     public void onShutter() {
         Log.i(TAG, "onShutter called");
-        mCurrentCanvas = new Canvas();
         mCurrentAngle = mCamView.m_deviceAzimuth;
     }
 
@@ -50,9 +49,9 @@ public class Snapshot implements Camera.ShutterCallback, Camera.PictureCallback 
         String path = Environment.getExternalStorageDirectory().toString();
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
-        String currentDateandTime = sdf.format(new Date());
+        String currentDateAndTime = sdf.format(new Date());
 
-        File file = new File(path, "summitsAround" + currentDateandTime + ".jpg");
+        File file = new File(path, "summitsAround" + currentDateAndTime + ".jpg");
 
         try {
             FileOutputStream fOut = new FileOutputStream(file);

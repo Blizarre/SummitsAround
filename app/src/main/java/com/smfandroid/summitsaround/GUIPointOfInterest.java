@@ -42,7 +42,7 @@ public class GUIPointOfInterest implements Comparable<GUIPointOfInterest> {
     }
 
     /*
-     * Check whether the GUIPOI is is the screen space.
+     * Check whether the GUIPointOfInterest is is the screen space.
      */
     public boolean shouldDraw(Angle cameraOpenAngle, Angle cameraAngle) {
         Angle currentAngle = getAngle().sub(cameraAngle);

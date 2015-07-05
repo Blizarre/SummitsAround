@@ -26,8 +26,6 @@ public class PointManager {
         this.m_prefs = prefs;
     }
 
-    public SharedPreferences getPrefs() {return this.m_prefs;}
-
     SharedPreferences m_prefs;
     Context m_Context;
 

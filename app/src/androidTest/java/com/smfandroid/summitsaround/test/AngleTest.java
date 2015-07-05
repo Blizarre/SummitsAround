@@ -6,7 +6,7 @@ import junit.framework.TestCase;
 
 public class AngleTest  extends TestCase {
 
-	public void testgetAngle()
+	public void testGetAngle()
 	{
 		Angle a1 = new Angle(5*Angle.PI);
 		assertEquals(Angle.PI, a1.getRawAngle(), 0.01);

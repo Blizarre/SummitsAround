@@ -2,6 +2,7 @@ package com.smfandroid.summitsaround;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -13,7 +14,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.Toast;
-import android.content.Intent;
 
 public class MainActivity extends Activity implements View.OnTouchListener{
     protected final String TAG = getClass().getSimpleName();
@@ -35,8 +35,6 @@ public class MainActivity extends Activity implements View.OnTouchListener{
         public float getX() {return X;}
         public float getY() {return Y;}
     }
-    Point downPt;
-    Point upPt;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
