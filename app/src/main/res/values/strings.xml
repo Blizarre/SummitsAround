@@ -2,7 +2,6 @@
 <resources>
 
     <string name="app_name">SummitsAround</string>
-    <string name="action_settings">Settings</string>
 
     <!--preferencesSettings-->
     <string name="areas">Régions</string>
@@ -14,9 +13,6 @@
     <string name="monuments">Monuments</string>
 
     <string name="distance">Maximum distance</string>
-
-    <string name="general">general</string>
-    <string name="camera">camera</string>
 
     <!--menu-->
     <string name="menu_settings">settings</string>

@@ -9,7 +9,6 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -19,20 +18,25 @@ import android.content.Intent;
 public class MainActivity extends Activity implements View.OnTouchListener{
     protected final String TAG = getClass().getSimpleName();
 
-    CameraPreview mPreview = null;
-    PointManager mPointManager;
-    Snapshot mSnap;
+    protected CameraPreview mPreview = null;
+    protected PointManager mPointManager;
+    protected Snapshot mSnap;
+    protected OverlayView mOverlayView;
+    protected Angle mCameraHorizontalViewAngle;
 
+    protected boolean mIsMultiTouch = false;
+    protected float mRotCorrection = 0.0f;
+    protected Point mLastPoint = null;
 
-    class point{
+    class Point {
         private final float X;
         private final float Y;
-        public point(float x, float y){X = x; Y = y;}
+        public Point(float x, float y){X = x; Y = y;}
         public float getX() {return X;}
         public float getY() {return Y;}
     }
-    point downPt;
-    point upPt;
+    Point downPt;
+    Point upPt;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,17 +48,17 @@ public class MainActivity extends Activity implements View.OnTouchListener{
 
             // Create our Preview view and set it as the content of our activity.
             mPreview = new CameraPreview(this);
+            mCameraHorizontalViewAngle = new Angle(Math.toRadians(mPreview.getParameters().getHorizontalViewAngle()));
             FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
             preview.addView(mPreview);
-            OverlayView animation = (OverlayView) findViewById(R.id.animation_view);
-            mSnap = new Snapshot(animation, mPreview);
+            mOverlayView = (OverlayView) findViewById(R.id.animation_view);
+            mSnap = new Snapshot(mOverlayView, mPreview);
             mPointManager = new PointManager(this);
             mPointManager.setPrefs(PreferenceManager.getDefaultSharedPreferences(this));
             mPointManager.reset();
-            animation.init(mPointManager);
-            Angle cameraHorizontalViewAngle = new Angle(Math.toRadians(mPreview.getParameters().getHorizontalViewAngle()));
-            animation.setHorizontalCameraAngle(cameraHorizontalViewAngle);
-            animation.bringToFront();
+            mOverlayView.init(mPointManager);
+            mOverlayView.setHorizontalCameraAngle(mCameraHorizontalViewAngle);
+            mOverlayView.bringToFront();
         } else {
             Toast.makeText(getBaseContext(), "Error: Camera not available", Toast.LENGTH_LONG).show();
         }
@@ -63,8 +67,7 @@ public class MainActivity extends Activity implements View.OnTouchListener{
     @Override
     public void onPause() {
         super.onPause();
-        OverlayView animation = (OverlayView) findViewById(R.id.animation_view);
-        animation.onPause();
+        mOverlayView.onPause();
     }
 
     @Override
@@ -72,8 +75,7 @@ public class MainActivity extends Activity implements View.OnTouchListener{
         super.onResume();
         // ugly, should check if the parameters have changed
         mPointManager.reset();
-        OverlayView animation = (OverlayView) findViewById(R.id.animation_view);
-        animation.onResume();
+        mOverlayView.onResume();
     }
 
 
@@ -91,19 +93,44 @@ public class MainActivity extends Activity implements View.OnTouchListener{
         return true;
     }
 
+
     @Override
     public boolean onTouchEvent(MotionEvent e)
     {
-        switch (e.getAction()) {
+        switch (e.getActionMasked()) {
             case MotionEvent.ACTION_DOWN: {
-                downPt = new point(e.getX(), e.getY());
+                Log.i(TAG, "MotionEvent Action DOWN");
+                mLastPoint = new Point(e.getX(), e.getY());
                 return true;
             }
+            /* Another finger is in contact with the screen, this mean that
+               the user want to calibrate the compass */
+            case MotionEvent.ACTION_POINTER_DOWN: {
+                Log.i(TAG, "MotionEvent Action POINTER_DOWN");
+                mIsMultiTouch = true;
+                mLastPoint = new Point(e.getX(), e.getY());
+                return true;
+            }
+            // All fingers are out of the screen, if it wasn't a multitouch, check if it is a swipe
             case MotionEvent.ACTION_UP: {
-                upPt = new point(e.getX(), e.getY());
-                onFling(downPt, upPt);
+                Log.i(TAG, "MotionEvent Action UP");
+                if(!mIsMultiTouch) {
+                    Point upPt = new Point(e.getX(), e.getY());
+                    onFling(mLastPoint, upPt);
+                }
                 return true;
             }
+            // if the user want to calibrate the compass : must be a multitouch situation
+            case MotionEvent.ACTION_MOVE:
+                Log.i(TAG, "MotionEvent Action MOVE");
+                if(mIsMultiTouch)
+                {
+                    mRotCorrection += ( e.getX() - mLastPoint.getX() ) * mCameraHorizontalViewAngle.getRawAngle() / mOverlayView.getWidth();
+                    mLastPoint = new Point(e.getX(), e.getY());
+                    SingletonDebugData.getInstance().angleCorrection = mRotCorrection;
+
+                    mOverlayView.setAngleCorrection(new Angle(mRotCorrection));
+                }
         }
         return true;
     }
@@ -126,32 +153,28 @@ public class MainActivity extends Activity implements View.OnTouchListener{
 
     private static final int SWIPE_THRESHOLD = 100;
 
-    public void onFling(point pt1, point pt2) {
-        try {
-            float diffY = pt2.getY() - pt1.getY();
-            float diffX = pt2.getX() - pt1.getX();
-            if (Math.abs(diffX) > Math.abs(diffY)) {
-                if (Math.abs(diffX) > SWIPE_THRESHOLD) {
-                    if (diffX > 0) {
-                        onSwipeRight();
-                    } else {
-                        onSwipeLeft();
-                    }
-                }
-            } else if (Math.abs(diffX) < Math.abs(diffY)) {
-                if (Math.abs(diffY) > SWIPE_THRESHOLD) {
-                    if (diffY > 0) {
-                        onSwipeBottom();
-                    } else {
-                        onSwipeTop();
-                    }
+    public void onFling(Point pt1, Point pt2) {
+        float diffY = pt2.getY() - pt1.getY();
+        float diffX = pt2.getX() - pt1.getX();
+        if (Math.abs(diffX) > Math.abs(diffY)) {
+            if (Math.abs(diffX) > SWIPE_THRESHOLD) {
+                if (diffX > 0) {
+                    onSwipeRight();
+                } else {
+                    onSwipeLeft();
                 }
             }
-            else {
-                onTouch();
+        } else if (Math.abs(diffX) < Math.abs(diffY)) {
+            if (Math.abs(diffY) > SWIPE_THRESHOLD) {
+                if (diffY > 0) {
+                    onSwipeBottom();
+                } else {
+                    onSwipeTop();
+                }
             }
-        } catch (Exception exception) {
-            exception.printStackTrace();
+        }
+        else {
+            onTouch();
         }
     }
 

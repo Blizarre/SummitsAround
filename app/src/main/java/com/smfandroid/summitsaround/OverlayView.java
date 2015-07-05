@@ -14,6 +14,7 @@ import android.location.Location;
 import android.preference.PreferenceManager;
 import android.text.TextPaint;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import java.util.Collections;
 import java.util.Locale;
@@ -23,22 +24,25 @@ import java.util.Vector;
 public class OverlayView extends View implements CompassListener, GPSLocatorListener {
     protected String TAG = getClass().getSimpleName();
 
-    protected int counter = 0;
     protected Compass m_compass;
     protected GPSLocator m_gps;
+    protected PointManager m_pointManager;
+
     protected Angle m_deviceAzimuth = Angle.A_ZERO;
+    protected Angle m_angleCorrection = Angle.A_ZERO;
     protected Angle m_horizontalViewAngle = Angle.A_HALF_PI;
+
     protected Location m_location = null;
     protected Vector<GUIPointOfInterest> m_pointsInterestList;
-    protected TextPaint mTextPaint, mDebugPaint;
-    protected Paint mLinePaint;
-    protected PointManager mPointManager;
-    protected Bitmap mCameraBitmap;
+
+    protected Bitmap m_cameraBitmap;
+
+    protected TextPaint m_textPaint, m_debugPaint;
+    protected Paint m_linePaint;
 
     public OverlayView(Context context) {
         super(context);
     }
-
     public OverlayView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
@@ -49,34 +53,34 @@ public class OverlayView extends View implements CompassListener, GPSLocatorList
 
     public void init(PointManager pm) {
 
-        mPointManager = pm;
+        m_pointManager = pm;
         m_compass = new Compass(getContext(), this);
         m_gps = new GPSLocator(getContext());
 
         // Set up a default TextPaint object
-        mTextPaint = new TextPaint();
-        mTextPaint.setFlags(Paint.ANTI_ALIAS_FLAG);
-        mTextPaint.setTextAlign(Paint.Align.CENTER);
-        mTextPaint.setTextSize(50);
-        mTextPaint.setTextSkewX(-0.25f);
-        mTextPaint.setColor(Color.BLUE);
-        mTextPaint.setShadowLayer(10f, 15f, 20f, Color.BLACK);
-        mTextPaint.setTypeface(Typeface.DEFAULT_BOLD);
+        m_textPaint = new TextPaint();
+        m_textPaint.setFlags(Paint.ANTI_ALIAS_FLAG);
+        m_textPaint.setTextAlign(Paint.Align.CENTER);
+        m_textPaint.setTextSize(50);
+        m_textPaint.setTextSkewX(-0.25f);
+        m_textPaint.setColor(Color.BLUE);
+        m_textPaint.setShadowLayer(10f, 15f, 20f, Color.BLACK);
+        m_textPaint.setTypeface(Typeface.DEFAULT_BOLD);
 
-        mDebugPaint = new TextPaint();
-        mDebugPaint.setTextAlign(Paint.Align.LEFT);
-        mDebugPaint.setTextSize(30);
-        mDebugPaint.setTextSkewX(-0.25f);
-        mDebugPaint.setColor(Color.BLUE);
-        mDebugPaint.setTypeface(Typeface.DEFAULT_BOLD);
+        m_debugPaint = new TextPaint();
+        m_debugPaint.setTextAlign(Paint.Align.LEFT);
+        m_debugPaint.setTextSize(30);
+        m_debugPaint.setTextSkewX(-0.25f);
+        m_debugPaint.setColor(Color.BLUE);
+        m_debugPaint.setTypeface(Typeface.DEFAULT_BOLD);
 
-        mLinePaint = new Paint();
-        mLinePaint.setColor(Color.RED);
-        mLinePaint.setStyle(Style.STROKE);
-        mLinePaint.setStrokeWidth(5);
+        m_linePaint = new Paint();
+        m_linePaint.setColor(Color.RED);
+        m_linePaint.setStyle(Style.STROKE);
+        m_linePaint.setStrokeWidth(5);
 
 
-        mCameraBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.camera);
+        m_cameraBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.camera);
 
         this.setLayerType(LAYER_TYPE_HARDWARE, null);
         this.setBackgroundColor(Color.TRANSPARENT);
@@ -88,14 +92,18 @@ public class OverlayView extends View implements CompassListener, GPSLocatorList
 
     void updatePointOfInterestList(Location loc) {
         m_location = loc;
-        m_pointsInterestList = mPointManager.GetPointsForLocation(loc, true);
+        m_pointsInterestList = m_pointManager.GetPointsForLocation(loc, true);
+    }
+
+    protected void setAngleCorrection(Angle correction)
+    {
+        Log.i(TAG, "New angle correction" + correction);
+        m_angleCorrection = correction;
     }
 
     protected void drawAtAngle(Canvas canvas, Angle angle)
     {
         PointF screenPosition;
-
-        counter++;
 
         int index = 0;
 
@@ -106,9 +114,9 @@ public class OverlayView extends View implements CompassListener, GPSLocatorList
                 screenPosition = p.getPositionInGUI(m_horizontalViewAngle, canvas.getWidth(), canvas.getHeight(), angle);
                 float mod = index % 2;
                 float positionY = 60 + (mod == 0 ? 50 : 0);
-                canvas.drawText(p.getLabel(), screenPosition.x, positionY, mTextPaint);
+                canvas.drawText(p.getLabel(), screenPosition.x, positionY, m_textPaint);
 
-                canvas.drawLine(screenPosition.x, positionY, screenPosition.x, screenPosition.y, mLinePaint);
+                canvas.drawLine(screenPosition.x, positionY, screenPosition.x, screenPosition.y, m_linePaint);
             }
             index++;
         }
@@ -117,19 +125,19 @@ public class OverlayView extends View implements CompassListener, GPSLocatorList
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        drawAtAngle(canvas, m_deviceAzimuth);
+        drawAtAngle(canvas, m_deviceAzimuth.sub(m_angleCorrection));
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
 
         if (prefs.getBoolean("camera_ready", false)) {
-            canvas.drawBitmap(mCameraBitmap, getWidth() / 2 - mCameraBitmap.getWidth() / 2, (int) (getHeight() * 0.80), null);
+            canvas.drawBitmap(m_cameraBitmap, getWidth() / 2 - m_cameraBitmap.getWidth() / 2, (int) (getHeight() * 0.80), null);
         }
 
         drawDebugData(canvas);
     }
 
     private void drawDebugData(Canvas canvas) {
-        float interline = -(mDebugPaint.ascent() + mDebugPaint.descent())*1.5f;
+        float interline = -(m_debugPaint.ascent() + m_debugPaint.descent())*1.5f;
         float height = getHeight() - interline;
         String debugData = SingletonDebugData.getInstance().toString();
 
@@ -145,7 +153,7 @@ public class OverlayView extends View implements CompassListener, GPSLocatorList
         }
 
         for (String line: debugData.split("\n")) {
-            canvas.drawText(line, 0, height, mDebugPaint);
+            canvas.drawText(line, 0, height, m_debugPaint);
             height -= interline;
         }
     }
