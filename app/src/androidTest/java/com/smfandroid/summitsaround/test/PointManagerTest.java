@@ -12,7 +12,7 @@ public class PointManagerTest extends AndroidTestCase {
 
 
     public void testLoadFromJSON() throws JSONException {
-        PointManager pm = new PointManager();
+        PointManager pm = new PointManager(getContext());
         String testData =
             "{ POIList:[ " +
             "{ \"name\":\"Mairie de Villeurbanne\", \"altitude\":100, \"latitude\":45.766592, \"longitude\":4.879600, \"type\":\"BUILDING\", \"areas\" : [\"Rhône\", \"France\"] }," +
