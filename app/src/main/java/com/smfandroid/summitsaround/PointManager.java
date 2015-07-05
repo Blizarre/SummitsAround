@@ -55,7 +55,7 @@ public class PointManager {
 
         if(location != null) {
             for (PointOfInterest p : m_pointsOfInterest) {
-                if ( p.computeDistanceFrom(location) < m_prefs.getInt("distance", Integer.MAX_VALUE)) {
+                if ( p.computeDistanceFrom(location) < Integer.parseInt(m_prefs.getString("distance", "0"))) {
                     data.add(new GUIPointOfInterest(p.getLabel(), p.getType(),
                             p.computeDistanceFrom(location), p.computeAngleFrom(location)));
                 }

@@ -1,23 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="listArray">
+    <string-array name="distancesLabels">
         <item>500m</item>
         <item>1km</item>
         <item>2km</item>
         <item>5km</item>
         <item>20km</item>
         <item>50km</item>
-        <item>no limit</item>
     </string-array>
 
-    <integer-array name="listValues">
+    <string-array name="distancesValues">
         <item>500</item>
         <item>1000</item>
         <item>2000</item>
         <item>5000</item>
         <item>20000</item>
         <item>50000</item>
-        <item>0</item>
-    </integer-array>
+    </string-array>
 
 </resources>

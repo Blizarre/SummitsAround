@@ -5,21 +5,18 @@
     <string name="action_settings">Settings</string>
 
     <!--preferencesSettings-->
-    <string name="areas">regions</string>
-    <string name="poi_type">points d\'intérêts</string>
-    <string name="summits">sommets</string>
-    <string name="lakes">lacs</string>
-    <string name="buildings">batiments</string>
-    <string name="towns">Towns</string>
+    <string name="areas">Régions</string>
+    <string name="poi_type">Points d\'intérêts</string>
+    <string name="summits">Sommets</string>
+    <string name="lakes">Lacs</string>
+    <string name="buildings">Bâtiments</string>
+    <string name="towns">Villes</string>
     <string name="monuments">Monuments</string>
 
-    <string name="distance">distance</string>
-    <string name="max_distance">max. distance</string>
-    <string name="list_distance">dist</string>
+    <string name="distance">Maximum distance</string>
 
     <string name="general">general</string>
     <string name="camera">camera</string>
-    <string name="camera_shoot">camera_shoot</string>
 
     <!--menu-->
     <string name="menu_settings">settings</string>

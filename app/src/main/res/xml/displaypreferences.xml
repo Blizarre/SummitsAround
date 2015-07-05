@@ -38,11 +38,11 @@
     <PreferenceCategory
         android:title="@string/distance">
         <ListPreference
-            android:key="@string/distance"
-            android:title="@string/max_distance"
+            android:key="distance"
+            android:title="@string/distance"
             android:defaultValue="500"
-            android:entries="@array/listArray"
-            android:entryValues="@array/listValues">
+            android:entries="@array/distancesLabels"
+            android:entryValues="@array/distancesValues">
         </ListPreference>
     </PreferenceCategory>
 </PreferenceScreen>
