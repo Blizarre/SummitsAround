@@ -116,6 +116,7 @@ public class MainActivity extends Activity implements View.OnTouchListener{
                     Point upPt = new Point(e.getX(), e.getY());
                     onFling(mLastPoint, upPt);
                 }
+                mIsMultiTouch = false;
                 return true;
             }
             // if the user want to calibrate the compass : must be a multitouch situation
