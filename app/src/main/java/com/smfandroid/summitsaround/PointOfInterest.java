@@ -42,7 +42,7 @@ public class PointOfInterest {
      * @return distance in meters between this and other
      */
     public float computeDistanceFrom(Location other) {
-        return (float) (other.distanceTo(mLocation));
+        return other.distanceTo(mLocation);
     }
 
     /***
@@ -55,9 +55,11 @@ public class PointOfInterest {
     }
 
 
+    // don't forget to update displaypreferences.xml with the new enums
     public enum PointType {
         SUMMIT,
         TOWN,
+        LAKE,
         MONUMENT,
         BUILDING,
         NONE

@@ -15,7 +15,7 @@ public class SingletonDebugData {
     public double rawInputLatitude;
     public double rawInputLongitude;
     public int numberOfGPSRefresh;
-
+    public int numberOfPOI;
     private static SingletonDebugData m_singleton = null;
 
     private SingletonDebugData() { }
@@ -30,11 +30,12 @@ public class SingletonDebugData {
     @Override
     public String toString()
     {
-        return String.format(Locale.ENGLISH, "Compass raw: %02.3f (refresh#: %d)\nGPS raw lat: %03.4f, long: %03.4f (refresh#: %d)",
+        return String.format(Locale.ENGLISH, "Compass raw: %02.3f (refresh#: %d)\nGPS raw lat: %03.4f, long: %03.4f (refresh#: %d)\nNumber of POI: %d",
                 rawInputAzimuth,
                 numberOfCompassRefresh,
                 rawInputLatitude,
                 rawInputLongitude,
-                numberOfGPSRefresh);
+                numberOfGPSRefresh,
+                numberOfPOI);
     }
 }

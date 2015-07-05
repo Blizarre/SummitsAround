@@ -10,18 +10,28 @@
     <PreferenceCategory
         android:title="@string/poi_type">
         <CheckBoxPreference
-            android:key="@string/summits"
+            android:key="pt_SUMMIT"
             android:title="@string/summits"
             android:defaultValue="true">
         </CheckBoxPreference>
         <CheckBoxPreference
-            android:key="@string/lakes"
+            android:key="pt_TOWN"
+            android:title="@string/towns"
+            android:defaultValue="true">
+        </CheckBoxPreference>
+        <CheckBoxPreference
+            android:key="pt_BUILDING"
+            android:title="@string/buildings"
+            android:defaultValue="true">
+        </CheckBoxPreference>
+        <CheckBoxPreference
+            android:key="pt_LAKE"
             android:title="@string/lakes"
             android:defaultValue="true">
         </CheckBoxPreference>
         <CheckBoxPreference
-            android:key="@string/buildings"
-            android:title="@string/buildings"
+            android:key="pt_MONUMENT"
+            android:title="@string/monuments"
             android:defaultValue="true">
         </CheckBoxPreference>
     </PreferenceCategory>

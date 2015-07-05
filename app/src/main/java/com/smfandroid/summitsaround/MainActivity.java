@@ -48,7 +48,7 @@ public class MainActivity extends Activity implements View.OnTouchListener{
             preview.addView(mPreview);
             OverlayView animation = (OverlayView) findViewById(R.id.animation_view);
             mSnap = new Snapshot(animation, mPreview);
-            mPointManager = new PointManager();
+            mPointManager = new PointManager(this);
             mPointManager.setPrefs(PreferenceManager.getDefaultSharedPreferences(this));
             mPointManager.reset();
             animation.init(mPointManager);
@@ -70,6 +70,8 @@ public class MainActivity extends Activity implements View.OnTouchListener{
     @Override
     public void onResume() {
         super.onResume();
+        // ugly, should check if the parameters have changed
+        mPointManager.reset();
         OverlayView animation = (OverlayView) findViewById(R.id.animation_view);
         animation.onResume();
     }
@@ -107,42 +109,12 @@ public class MainActivity extends Activity implements View.OnTouchListener{
     }
 
 
+    // Show the preference panel. onActivityResult is called when the user exit the panel
     public void startSettingsActivity() {
         Intent intent = new Intent();
-        intent.setClass(MainActivity.this, SetPreferenceActivity.class);
-        startActivityForResult(intent, 0);
+        intent.setClass(MainActivity.this, PreferenceActivity.class);
         startActivity(intent);
     }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        // TODO Auto-generated method stub
-        //super.onActivityResult(requestCode, resultCode, data);
-        OverlayView animation = (OverlayView) findViewById(R.id.animation_view);
-        animation.onPause();
-        mPointManager.reset();
-        animation.onResume();
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        if (item.getItemId() == R.id.action_settings){
-            Intent intent = new Intent(this, SetPreferenceActivity.class);
-            startActivity(intent);
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    private void loadPrefs(){
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        Toast.makeText(this, "summits activated: "  + prefs.getBoolean("sommets", false), Toast.LENGTH_LONG).show();
-    }
-
 
     /**
      * Check if this device has a camera

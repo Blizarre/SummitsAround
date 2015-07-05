@@ -1,7 +1,9 @@
 package com.smfandroid.summitsaround;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.location.Location;
+import android.util.Log;
 
 import com.smfandroid.summitsaround.PointOfInterest.PointType;
 
@@ -11,19 +13,13 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Vector;
 
-/**
- * File format definition:
- * { "POIList": [
- * { "name":"Mairie de Villeurbanne", "altitude":100, "latitude":45.766592, "longitude":4.879600, "type":"BUILDING", "areas"=["Rhône", "France"] },
- * { "name":"Tour Part Dieu", "altitude":100, "latitude":45.761063, "longitude":4.853752, "type":"BUILDING", "areas"=["Rhône", "France"] },
- * { "name":"Basilique de fourvière", "altitude":100, "latitude":45.762262, "longitude":4.822910, "type":"BUILDING", "areas"=["Rhône", "France"] }
- * { "name":"Mont Blanc", "altitude":100, "latitude":45.833679, "longitude":6.864564, "type":"BUILDING", "areas"=["Rhône", "France"] }
- * ] }
- */
-
 public class PointManager {
+    protected final String TAG = getClass().getSimpleName();
+
     protected Vector<PointOfInterest> m_pointsOfInterest = new Vector<>();
 
     public void setPrefs(SharedPreferences prefs) {
@@ -33,8 +29,10 @@ public class PointManager {
     public SharedPreferences getPrefs() {return this.m_prefs;}
 
     SharedPreferences m_prefs;
+    Context m_Context;
 
-    public PointManager() {
+    public PointManager(Context c) {
+        m_Context = c;
     }
 
     protected Location createLocation(double latitude, double longitude, double altitude) {
@@ -87,27 +85,36 @@ public class PointManager {
 
     // TODO: switch to JsonReader, much better scalability
     public void loadFromJson(String data) throws JSONException {
+        // Store the list of  all PointTypes enabled in the configuration. the config name must be pt_<PointTypeName>
+        Set<PointType> enabledPT = new HashSet<>();
+        for(PointType pt : PointType.values())
+        {
+            if(m_prefs.getBoolean("pt_" + pt.name(), false))
+            {
+                enabledPT.add(pt);
+            }
+        }
+
+        // Parse the JSON file and extract only the landmarks that are enabled un the preferences
         JSONObject obj = new JSONObject(data);
         JSONArray jArray = obj.getJSONArray("POIList");
         for (int i = 0; i < jArray.length(); i++) {
             JSONObject jo_inside = jArray.getJSONObject(i);
             String name = jo_inside.getString("name");
-            String type = jo_inside.getString("type");
+            PointType type;
+            try {
+                type = PointType.valueOf(jo_inside.getString("type"));
+            } catch (IllegalArgumentException exc)
+            {
+                Log.e(TAG, "Invalid type during json loading:" + jo_inside.getString("type"));
+                type = PointType.NONE;
+            }
             double altitude = Double.parseDouble(jo_inside.getString("altitude"));
             double latitude =  Double.parseDouble(jo_inside.getString("latitude"));
             double longitude = Double.parseDouble(jo_inside.getString("longitude"));
-            /*if(jo_inside.has("areas")) {
-                JSONArray areasArr = jo_inside.getJSONArray("areas");
-                Vector<String> areas = new Vector<>(); // not used right now
-                for (int j = 0; j < areasArr.length(); ++j)
-                {
-                    areas.add(areasArr.getString(j));
-                }
-            }*/
-            if ((type.equals("SUMMIT") && m_prefs.getBoolean("sommets", false)) ||
-                    (type.equals("LAKE") && m_prefs.getBoolean("lacs", false)) ||
-                    (type.equals("BUILDING") && m_prefs.getBoolean("batiments", false))) {
-                    m_pointsOfInterest.add(new PointOfInterest(PointType.valueOf(type), name,
+            if (enabledPT.contains(type))
+            {
+                    m_pointsOfInterest.add(new PointOfInterest(type, name,
                             createLocation(latitude, longitude, altitude)));
             }
         }
@@ -131,18 +138,14 @@ public class PointManager {
     public void reset() {
         m_pointsOfInterest.clear();
         try {
-            InputStreamReader dataFile = FileSystemFileReader.openFile("summits/summitsAround.json");
+            InputStreamReader dataFile = new InputStreamReader( m_Context.getResources().openRawResource(R.raw.sampledata) );
             this.loadFromJson(dataFile);
         }
         catch (Exception e) {
-            //Toast.makeText(this, "Error loading json data file: " + e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+            Log.i(TAG, "JSON Data file not found. Back to default");
             this.loadDefaultData();
         }
-    }
-
-    public double processDistance(double lat1, double lon1, double lat2, double lon2){
-        return java.lang.Math.sqrt(java.lang.Math.pow((lat1 - lat2), 2) +
-                java.lang.Math.pow((lon1 - lon2), 2));
+        SingletonDebugData.getInstance().numberOfPOI = m_pointsOfInterest.size();
     }
 }
 

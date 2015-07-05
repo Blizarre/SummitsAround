@@ -10,6 +10,8 @@
     <string name="summits">sommets</string>
     <string name="lakes">lacs</string>
     <string name="buildings">batiments</string>
+    <string name="towns">Towns</string>
+    <string name="monuments">Monuments</string>
 
     <string name="distance">distance</string>
     <string name="max_distance">max. distance</string>

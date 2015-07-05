@@ -1,0 +1,93 @@
+{
+    "POIList": [
+        {
+            "name": "Mairie de Villeurbanne",
+            "altitude": 100,
+            "latitude": 45.766592,
+            "longitude": 4.879600,
+            "type": "BUILDING",
+            "areas": [
+                "Rhône",
+                "France"
+            ]
+        },
+        {
+            "name": "Tour Part Dieu",
+            "altitude": 100,
+            "latitude": 45.761063,
+            "longitude": 4.853752,
+            "type": "BUILDING",
+            "areas": [
+                "Rhône",
+                "France"
+            ]
+        },
+        {
+            "name": "Tour Incity",
+            "altitude": 100,
+            "latitude": 45.763271,
+            "longitude": 4.850961,
+            "type": "BUILDING",
+            "areas": [
+                "Rhône",
+                "France"
+            ]
+        },
+        {
+            "name": "Basilique de fourvière",
+            "altitude": 100,
+            "latitude": 45.762262,
+            "longitude": 4.822910,
+            "type": "BUILDING",
+            "areas": [
+                "Rhône",
+                "France"
+            ]
+        },
+        {
+            "name": "Mont Blanc",
+            "altitude": 100,
+            "latitude": 45.833679,
+            "longitude": 6.864564,
+            "type": "SUMMIT",
+            "areas": [
+                "Rhône",
+                "France"
+            ]
+        },
+        {
+            "name": "Lac Tête d'Or",
+            "altitude": 100,
+            "latitude": 45.779738,
+            "longitude": 4.851620,
+            "type": "LAKE",
+            "areas": [
+                "Rhône",
+                "France"
+            ]
+        },
+        {
+            "name": "Île du souvenir",
+            "altitude": 100,
+            "latitude": 45.780683,
+            "longitude": 4.851963,
+            "type": "MONUMENT",
+            "areas": [
+                "Rhône",
+                "France"
+            ]
+        },
+        {
+            "name": "Opéra de Lyon",
+            "altitude": 100,
+            "latitude": 45.767792,
+            "longitude": 4.836611,
+            "type": "BUILDING",
+            "areas": [
+                "Rhône",
+                "France"
+            ]
+        }
+    ]
+}
+
